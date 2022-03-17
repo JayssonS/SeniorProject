@@ -11,7 +11,7 @@ python manage.py makemigrations spotify2_app && python manage.py migrate spotify
 # Now load music data from the csv file into Django's database
 
 # WINDOWS: remove the # at the beginning of the line below
-./sqlite3 db.sqlite3 -cmd ".mode csv" ".import data.csv spotify2_app_musicdata"
+./sqlite3 db.sqlite3 -cmd ".mode csv" ".import tracks_features.csv spotify2_app_musicdata"
 ./sqlite3 db.sqlite3 -cmd ".mode csv" ".import artists.csv spotify2_app_artistdata"
 
 # MAC:remove the # at the beginning of the line below

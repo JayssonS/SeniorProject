@@ -1,6 +1,7 @@
 from re import A
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest, HttpResponse
+from django.contrib.postgres.search import SearchVector
 from .models import *
 
 import ast
@@ -66,7 +67,7 @@ def search_song(request):
     if (request.method != 'POST'):                          # If not post request
         return HttpResponseBadRequest()                     # Return bad request
 
-    song_data = search_song_by_keyword(keyword)[:10]        # List of song results. Limited to 10 results
+    song_data = search_song_by_keyword(keyword)             # List of song results. Limited to 10 results
 
     if (len(song_data) == 0):
         response = HttpResponse(                            # Create data not found response
@@ -87,9 +88,25 @@ def search_artist_by_keyword(keyword):
     return list(query.values('artists'))                            # Return queried data
 
 def search_song_by_keyword(keyword):
-    query = Musicdata.objects.filter(name__contains = keyword)      # Query songs based on keyword
+    list_results = []                                                       # Final list of results
 
-    return list(query.values('id', 'name'))                         # Return queried data
+    if len(list_results) < 10:
+        str_query = 'SELECT id, name FROM spotify2_app_musicdata '
+        split_keyword = str.split(keyword)
+
+        for i, word in enumerate(split_keyword):
+            if i == 0:
+                str_query += "where instr(LOWER(name || ' ' || artists), '" + word + "') "
+                continue
+            str_query += "and instr(LOWER(name || ' ' || artists), '" + word + "') "
+        
+        for song in Musicdata.objects.raw(str_query)[:(10-len(list_results))]:                      # Raw SQL query. Limit to 10 results
+            list_results.append({                                               # Append object to list of results
+                "id": song.id,
+                "name": song.name
+            })
+
+    return list_results                                                     # Return queried data
 
 def get_recommendations(request):
     try:
