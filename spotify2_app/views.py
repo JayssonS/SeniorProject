@@ -1,8 +1,10 @@
 from re import A
-from django.shortcuts import render
-from django.http import HttpResponseBadRequest, HttpResponse
-from django.contrib.postgres.search import SearchVector
+from django.shortcuts import redirect, render
+from django.http import Http404, HttpResponseBadRequest, HttpResponse
+from django.views.decorators.http import require_GET, require_POST
+from django.core import serializers
 from .models import *
+from .forms import *
 
 import ast
 import json
@@ -16,11 +18,33 @@ SPOTIPY_CLIENT_ID='f5f548e5850e449bacd8396fe552180c'
 SPOTIPY_CLIENT_SECRET='cc3e9b6b4c184cbb9d50cf304e2c3686'
 
 # Create your views here.
-def discover(request):
-    return render(request, 'discover/discover.html')
+def test(request):
+    form = DiscoverForm(request.POST)
+
+    if form.is_valid():
+        print(form.cleaned_data['genre'])
+        print(form.cleaned_data['artists'])
+    form = DiscoverForm()
+    return redirect('/')
+    """ else:
+        return Http404("Bad Form Input") """
+
+def discover_main(request):
+    return render(request, 'discover/discover_main.html')
+
+def discover_form(request):
+    form = DiscoverForm()
+
+    return render(request, 'discover/discover_form.html', {"form": form})
+
+def discover_recommendations(request):
+    return render(request, 'discover/discover_recommendations.html')
 
 def search_artist(request):
-    keyword = request.POST['keyword']                       # Grab keyword from post
+    try:
+        keyword = request.POST['keyword']                   # Grab keyword from post
+    except:
+        return HttpResponseBadRequest()
 
     if (not keyword or keyword == ''):                      # If the keyword is empty
         return HttpResponseBadRequest()                     # Return a bad request
@@ -41,15 +65,19 @@ def search_artist(request):
         return response
 
     for list_maps in map_artists:                           # Loop through returned artists
+        if len(set_artists) >= 30:
+            break
         try:
             for artist in ast.literal_eval(list_maps['artists']):
+                if len(set_artists) >= 30:
+                    break
                 set_artists.add(artist)                     # Add found artist to set
         except:
             continue
 
     del map_artists                                         # Cleanup map, no longer using
 
-    sorted_artists = sorted(set_artists)                    # Sort set into new list
+    sorted_artists = sorted(set_artists)                   # Sort set into new list
 
     del set_artists                                         # Cleanup set, no longer using
     
@@ -59,7 +87,10 @@ def search_artist(request):
     )
 
 def search_song(request):
-    keyword = request.POST['keyword']                       # Get keyword from post data
+    try:
+        keyword = request.POST['keyword']                   # Get keyword from post data
+    except:
+        return HttpResponseBadRequest()
 
     if (not keyword or keyword == ''):                      # If keyword bad
         return HttpResponseBadRequest()                     # Return bad request
@@ -68,6 +99,15 @@ def search_song(request):
         return HttpResponseBadRequest()                     # Return bad request
 
     song_data = search_song_by_keyword(keyword)             # List of song results. Limited to 10 results
+
+    if (len(song_data) == 0):
+        song_data = query_spotify_song(keyword)
+
+        for obj in song_data['tracks']['items']:
+            print(obj['id'])
+
+        """ for obj in serializers.deserialize('json', song_data['tracks']['items']):
+            print(obj['id']) """
 
     if (len(song_data) == 0):
         response = HttpResponse(                            # Create data not found response
@@ -80,35 +120,14 @@ def search_song(request):
     return HttpResponse(                                    # Return parsed data
         json.dumps({'songs': song_data}),
         content_type='application/json'
-    )
+    )                                                       # Return queried data
 
-def search_artist_by_keyword(keyword):
-    query = Musicdata.objects.filter(artists__contains = keyword)   # Query artists based on keyword
-
-    return list(query.values('artists'))                            # Return queried data
-
-def search_song_by_keyword(keyword):
-    list_results = []                                                       # Final list of results
-
-    if len(list_results) < 10:
-        str_query = 'SELECT id, name FROM spotify2_app_musicdata '
-        split_keyword = str.split(keyword)
-
-        for i, word in enumerate(split_keyword):
-            if i == 0:
-                str_query += "where instr(LOWER(name || ' ' || artists), '" + word + "') "
-                continue
-            str_query += "and instr(LOWER(name || ' ' || artists), '" + word + "') "
-        
-        for song in Musicdata.objects.raw(str_query)[:(10-len(list_results))]:                      # Raw SQL query. Limit to 10 results
-            list_results.append({                                               # Append object to list of results
-                "id": song.id,
-                "name": song.name
-            })
-
-    return list_results                                                     # Return queried data
-
+@require_POST
 def get_recommendations(request):
+    form = DiscoverForm(request.POST)
+
+    print(form['genre'])
+    print(form['artists'])
     try:
         request_artists = request.POST.getlist('artists[]')[:2]     # Grab list of artists. Limit to 2
         request_tracks = request.POST.getlist('tracks[]')[:2]       # Grab list of tracks. Limit to 2
@@ -118,8 +137,6 @@ def get_recommendations(request):
 
     artists = []                                                    # Predefine artist list
     recommendations = []                                            # Predefine recommendation list
-
-    print(genres)
 
     if (len(genres) > 1):                                           # If more than one genre is given
         return HttpResponseBadRequest()
@@ -152,6 +169,39 @@ def get_recommendations(request):
         json.dumps({'recommendations': recommendations}),
         content_type='application/json'
     )
+
+# Helper functions
+
+def search_artist_by_keyword(keyword):
+    query = Musicdata.objects.filter(artists__contains = keyword)   # Query artists based on keyword
+
+    return list(query.values('artists'))                            # Return queried data
+
+def search_song_by_keyword(keyword):
+    list_results = []                                               # Final list of results
+    str_query = 'SELECT id, name FROM spotify2_app_musicdata '
+    split_keyword = str.split(keyword)
+
+    for i, word in enumerate(split_keyword):
+        if i == 0:
+            str_query += "where instr(LOWER(name || ' ' || artists), '" + word + "') "
+            continue
+        str_query += "and instr(LOWER(name || ' ' || artists), '" + word + "') "
+    
+    for song in Musicdata.objects.raw(str_query)[:10]:                      # Raw SQL query. Limit to 10 results
+        list_results.append({                                               # Append object to list of results
+            "id": song.id,
+            "name": song.name
+        })
+
+    return list_results
+
+def query_spotify_song(keyword):
+    auth_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    songs = sp.search(q=keyword, limit=10, type='track')
+
+    return songs
 
 def query_spotify(artists, genres, tracks):
     auth_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)

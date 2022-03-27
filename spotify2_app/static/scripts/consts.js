@@ -1,0 +1,2 @@
+export const STATIC_URL_DISCOVER_RECOMMENDATIONS = "";
+export const STATIC_URL_DISCOVER_FORM = "";

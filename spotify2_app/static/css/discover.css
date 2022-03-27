@@ -79,23 +79,6 @@
     flex-wrap: wrap;
 }
 
-.div-genre-select {
-    height: 200px;
-    width: 200px;
-    margin: 15px;
-    display: inline;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.div-genre-select p {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-}
-
 #div-loading-recommendations {
     opacity: 0.8;
     background-color: rgba(0, 0, 0, 0.8);
@@ -130,3 +113,123 @@
     padding: 0;
     margin: 0;
 }
+
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.flex-container div {
+    margin: 5px;
+}
+
+.flex-container span {
+    font-weight: bolder;
+}
+
+.flex-container input[type="checkbox"] {
+    display: none;
+}
+
+.flex-container label {
+    height: 100%;
+    display: block;
+    background: white;
+    border: 2px solid hsl(209, 100%, 50%);
+    border-radius: 20px;
+    padding: 0.5rem;
+    text-align: center;
+    box-shadow: 0px 3px 10px -2px hsla(150, 5%, 65%, 0.5);
+    position: relative;
+    cursor: pointer;
+}
+
+.flex-container label:hover {
+    background: hsl(209, 100%, 50%);
+    color: hsla(215, 0%, 100%, 1);
+    box-shadow: 0px 0px 20px hsla(209, 100%, 50%, 0.5);
+}
+
+.flex-container input[type="checkbox"]:checked + label {
+    background: rgb(14, 174, 0);
+    color: hsla(215, 0%, 100%, 1);
+    box-shadow: 0px 0px 20px rgba(14, 174, 0, 0.5);
+    border: 2px solid rgb(14, 174, 0);
+}
+
+.flex-container input[type="checkbox"]:checked + label:hover {
+    background: rgb(174, 0, 0);
+    box-shadow: 0px 0px 20px rgba(174, 0, 0, 0.5);
+    border: 2px solid rgb(174, 0, 0);
+}
+
+/*
+
+
+Genre Formatting
+
+
+*/
+
+#genre-container input[type="radio"] {
+  display: none;
+}
+
+#genre-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#genre-container div {
+  flex: 1;
+  padding: 0.7rem;
+}
+
+#genre-container label:hover {
+    background: hsl(209, 100%, 50%);
+    color: hsla(215, 0%, 100%, 1);
+    box-shadow: 0px 0px 20px hsla(209, 100%, 50%, 0.5);
+}
+
+#genre-container label {
+  width: 200px;
+  height: 80px;
+  display: block;
+  background: white;
+  border: 2px solid hsl(209, 100%, 50%);
+  border-radius: 20px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  box-shadow: 0px 3px 10px -2px hsla(150, 5%, 65%, 0.5);
+  position: relative;
+  cursor: pointer;
+}
+
+#genre-container label p {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#genre-container input[type="radio"]:checked + label {
+  background: hsl(209, 100%, 50%);
+  color: hsla(215, 0%, 100%, 1);
+  box-shadow: 0px 0px 20px hsla(209, 100%, 50%, 0.5);
+}
+
+@media only screen and (max-width: 700px) {
+  #genre-container {
+    flex-direction: column;
+  }
+}
+
+/*
+
+
+Genre Formatting
+
+
+*/
