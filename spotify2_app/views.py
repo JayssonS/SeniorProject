@@ -126,8 +126,6 @@ def search_song(request):
 def get_recommendations(request):
     form = DiscoverForm(request.POST)
 
-    print(form['genre'])
-    print(form['artists'])
     try:
         request_artists = request.POST.getlist('artists[]')[:2]     # Grab list of artists. Limit to 2
         request_tracks = request.POST.getlist('tracks[]')[:2]       # Grab list of tracks. Limit to 2
