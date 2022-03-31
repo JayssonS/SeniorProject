@@ -15,7 +15,6 @@ const stageViews = {
 
 const STRING_ID_LOADING_CONTAINER = 'div-loading-recommendations';
 const STRING_CLASS_DIV_RESULT = 'div-search-result';
-const STRING_ID_TAILOR_CONTAINER = 'discover-tailor-container';
 const STRING_ID_DISCOVER_CONTAINER = 'discover-container';
 const STRING_VAR_STORAGE_RECO = 'recommendations';
 const INT_KEYWORD_MIN_LENGTH = 2;
@@ -76,14 +75,6 @@ const arrAlertErrors = {
 // #endregion varsAlert
 
 $(function () {
-    function checkStorage() {
-        let recommendations = localStorage.getItem(STRING_VAR_STORAGE_RECO);
-
-        if (!recommendations) return;                           // If no recommendations let the form display
-        $(`#${STRING_ID_TAILOR_CONTAINER}`).remove();           // Remove form
-        buildRecommendations(recommendations);                  // Build recommendations from stored data
-    }
-
     // #region Multistep
     $('.btn-cont').on('click', function () {
         if (stage == 0 && selectedGenre === '') {
@@ -227,7 +218,7 @@ $(function () {
                 switch (xhr.status) {
                     case 200:
                         writeToStorage(json);
-                        window.location.href = '/discover';
+                        window.location.href = '/discover_recommendations';
                         break;
                     case 204:
                         console.log('no recommendations found');
@@ -462,5 +453,4 @@ $(function () {
         }
         return cookieValue;
     };
-    checkStorage();
 });

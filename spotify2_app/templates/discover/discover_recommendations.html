@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+Discover | For You
+
+{% endblock %}
+
+{% block style %}
+
+{% static 'css/discover_recommendations.css' %}
+
+{% endblock %}
+
+{% block content %}
+<center>
+    <h1>
+        Recommended For You
+    </h1>
+</center>
+<br/>
+
+<div id='div-recommendations'>
+
+</div>
+<script src="{% static 'scripts/discover/recommendations.js' %}"></script>
+{% endblock %}
