@@ -1,8 +1,11 @@
+from posixpath import split
 from re import A
+import re
 from django.shortcuts import redirect, render
-from django.http import Http404, HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_GET, require_POST
-from django.core import serializers
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from .models import *
 from .forms import *
 
@@ -16,18 +19,58 @@ from spotipy.oauth2 import SpotifyClientCredentials
 # Spotipy credentials flow setup
 SPOTIPY_CLIENT_ID='f5f548e5850e449bacd8396fe552180c'
 SPOTIPY_CLIENT_SECRET='cc3e9b6b4c184cbb9d50cf304e2c3686'
+CONST_RECO_COOKIE_NAME = 'songreco'
+CONST_RECO_MODEL_NAME = 'recommendations'
 
 # Create your views here.
-def test(request):
-    form = DiscoverForm(request.POST)
 
-    if form.is_valid():
-        print(form.cleaned_data['genre'])
-        print(form.cleaned_data['artists'])
-    form = DiscoverForm()
-    return redirect('/')
-    """ else:
-        return Http404("Bad Form Input") """
+# Views relating to login functionality
+
+def request_login(request):
+    if (request.method == 'POST'):
+        form = LoginForm(request, data=request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                messages.info(request, f"You are now logged in as {username}.")
+
+                response = redirect('/')
+
+                response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(user, CONST_RECO_MODEL_NAME), samesite='Lax')
+                return response
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    form = LoginForm()
+    return render(request=request, template_name='registration/login.html', context={"login_form":form})
+
+def request_signup(request):
+    if(request.method == 'POST'):
+        form = SignUpForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            recommendations = request.COOKIES.get(CONST_RECO_COOKIE_NAME)
+            
+            login(request, user)
+
+            if (is_reco_valid_from_cookies(recommendations)):
+                setattr(user, CONST_RECO_MODEL_NAME, recommendations)
+                user.save()
+
+            return redirect('/')
+    else:
+        form = SignUpForm()
+
+    return render(request, 'registration/signup.html', {'form' : form})
+
+# Views relating to discover form
 
 def discover_main(request):
     return render(request, 'discover/discover_main.html')
@@ -35,7 +78,8 @@ def discover_main(request):
 def discover_form(request):
     form = DiscoverForm()
 
-    return render(request, 'discover/discover_form.html', {"form": form})
+    response = render(request, 'discover/discover_form.html', {"form": form})
+    return response
 
 def discover_recommendations(request):
     return render(request, 'discover/discover_recommendations.html')
@@ -207,3 +251,17 @@ def query_spotify(artists, genres, tracks):
     recommendations = sp.recommendations(seed_artists=artists, seed_genres=genres, seed_tracks=tracks, limit=10)
 
     return recommendations
+
+def is_reco_valid_from_cookies(recommendations):
+    print(recommendations)
+    if (recommendations is None):
+        return False
+    
+    splitRecommendations = recommendations.split(':')
+    
+    if (splitRecommendations is None or
+        len(splitRecommendations) > 10 or
+        len(splitRecommendations) < 1):
+        return False
+    
+    return True
