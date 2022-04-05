@@ -25,11 +25,20 @@ CONST_BASE_BACKEND = 'django.contrib.auth.backends.ModelBackend'
 
 # Create your views here.
 
+def home(request):
+    return render(request, 'base.html')
+
+# Views relating to user profiles
+def user_profile(request, username):
+    user = CustomUser.objects.get(username=username)
+
+    return render(request, 'profile/user_profile.html', {'pUser': user})
+
 # Views relating to login functionality
 
 def request_login(request):
-    if (request.user.is_authenticated):
-        return redirect('/')
+    """ if (request.user.is_authenticated):
+        return redirect('/') """
 
     if (request.method == 'POST'):
         form = LoginForm(request, data=request.POST)
@@ -57,8 +66,8 @@ def request_login(request):
     return render(request=request, template_name='registration/login.html', context={"login_form":form})
 
 def request_signup(request):
-    if (request.user.is_authenticated):
-        return redirect('/')
+    """ if (request.user.is_authenticated):
+        return redirect('/') """
 
     if(request.method == 'POST'):
         form = SignUpForm(request.POST)

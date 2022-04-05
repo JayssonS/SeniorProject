@@ -163,7 +163,7 @@ $(function () {
         console.log("Searching!");                                      // sanity check
 
         $.ajax({                                                        // Make API call
-            url: 'api/' + endpoint + '/',                               // API endpoint URL
+            url: '/api/' + endpoint + '/',                               // API endpoint URL
             type: 'POST',                                               // API request type
             headers: {                                                  // Headers, must include token for valid call
                 'X-CSRFToken': getCookie('csrftoken')
