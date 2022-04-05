@@ -16,7 +16,7 @@ const stageViews = {
 const STRING_ID_LOADING_CONTAINER = 'div-loading-recommendations';
 const STRING_CLASS_DIV_RESULT = 'div-search-result';
 const STRING_ID_DISCOVER_CONTAINER = 'discover-container';
-const STRING_VAR_STORAGE_RECO = 'recommendations';
+const STRING_VAR_STORAGE_RECO = 'songreco';
 const INT_KEYWORD_MIN_LENGTH = 2;
 
 let typingTimer = null;
@@ -218,7 +218,7 @@ $(function () {
                 switch (xhr.status) {
                     case 200:
                         writeToStorage(json);
-                        window.location.href = '/discover_recommendations';
+                        window.location.href = '/discover/recommendations';
                         break;
                     case 204:
                         console.log('no recommendations found');
@@ -405,9 +405,19 @@ $(function () {
 
 
     // #region Recommendations
-
     function writeToStorage(json) {
-        localStorage.setItem(STRING_VAR_STORAGE_RECO, JSON.stringify(json['recommendations']['tracks']));
+        const tracks = json['recommendations']['tracks']
+        let parsedJson = '';
+
+        for (i = 0; i < tracks.length; i++) {
+            parsedJson += tracks[i]['id'];
+
+            if (i === (tracks.length - 1)) {
+                break;
+            }
+            parsedJson += ':';
+        }
+        Cookies.set(STRING_VAR_STORAGE_RECO, parsedJson, {sameSite: 'Lax'});
     }
 
     // #endregion Recommendations

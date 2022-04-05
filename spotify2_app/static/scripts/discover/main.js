@@ -8,23 +8,22 @@ function determinePageLoad() {
 
     const hasRecommendations = checkCookiesForRecommendations();
 
-    console.log(hasRecommendations);
     if (hasRecommendations) {
-        window.location.replace('/discover_recommendations');
+        window.location.replace('/discover/recommendations');
         return;
     }
-    window.location.replace('/discover_form');
+    window.location.replace('/discover/tailor');
 }
 
 function checkCookiesForRecommendations() {
-    const recommendations = localStorage.getItem('recommendations');
+    const recommendations = Cookies.get('songreco');
 
     if (!recommendations) return false;
     try {
-        JSON.parse(recommendations);
+        recommendations.split(':');
         return true;
     } catch (e) {
-        localStorage.removeItem('recommendations');
+        Cookies.remove('songreco');
         return false;
     }
 }

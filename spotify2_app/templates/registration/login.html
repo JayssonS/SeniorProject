@@ -1,31 +1,26 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}Sign up | {% endblock %}
+{% block title %}Login | {% endblock %}
 
 {% block content %}
+<script src = "https://cdn.tailwindcss.com"></script>
 <div class="p-10 lg:p-20 text-center">
-    <h1 class="text-3xl lg:text-6xl text-white">Sign up</h1>
+    <h1 class="text-3xl lg:text-6xl">Login</h1>
 </div>
 
 <form method = "post" action = "." class="lg:w-1/4 px-4 mx-auto">
     {% csrf_token %}
 
     <div class = "mb-5">
-        <label class ="text-white">Username</label>
+        <label>Username</label>
 
         <input type="text" name = "username" class = "w-full mt-2 px-4 py-3 rounded-xl">
     </div>
 
     <div class = "mb-5">
-        <label class ="text-white">Password</label>
+        <label>Password</label>
 
-        <input type="password" name = "password1" class = "w-full mt-2 px-4 py-3 rounded-xl">
-    </div>
-
-    <div class = "mb-5">
-        <label class ="text-white">Repeat password</label>
-
-        <input type="password" name = "password2" class = "w-full mt-2 px-4 py-3 rounded-xl">
+        <input type="password" name = "password" class = "w-full mt-2 px-4 py-3 rounded-xl">
     </div>
 
 
@@ -39,6 +34,8 @@
         {% endfor %}
     {% endif %}
 
-    <button class = "px-5 py-3 rounded-xl text-white bg-teal-800 hover:bg-teal-700">Submit</button>
+    <button class = "px-5 py-3 rounded-xl text-white bg-teal-800 hover:bg-teal-700">Log in</button>
 </form>
+
+<a href="{% url "social:begin" "spotify" %}">Spotify</a>
 {% endblock %}
