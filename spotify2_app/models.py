@@ -1,10 +1,12 @@
+from email.policy import default
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
 class CustomUser(AbstractUser):
     pass
-    recommendations = models.TextField()
+    uid = models.TextField(default='')
+    recommendations = models.TextField(default='')
 
 class Musicdata(models.Model):
     id = models.TextField(primary_key=True)

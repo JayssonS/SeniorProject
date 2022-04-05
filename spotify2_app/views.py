@@ -21,12 +21,16 @@ SPOTIPY_CLIENT_ID='f5f548e5850e449bacd8396fe552180c'
 SPOTIPY_CLIENT_SECRET='cc3e9b6b4c184cbb9d50cf304e2c3686'
 CONST_RECO_COOKIE_NAME = 'songreco'
 CONST_RECO_MODEL_NAME = 'recommendations'
+CONST_BASE_BACKEND = 'django.contrib.auth.backends.ModelBackend'
 
 # Create your views here.
 
 # Views relating to login functionality
 
 def request_login(request):
+    if (request.user.is_authenticated):
+        return redirect('/')
+
     if (request.method == 'POST'):
         form = LoginForm(request, data=request.POST)
 
@@ -35,8 +39,10 @@ def request_login(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
 
+            print(username, password, user)
+
             if user is not None:
-                login(request, user)
+                login(request, user, CONST_BASE_BACKEND)
                 messages.info(request, f"You are now logged in as {username}.")
 
                 response = redirect('/')
@@ -51,6 +57,9 @@ def request_login(request):
     return render(request=request, template_name='registration/login.html', context={"login_form":form})
 
 def request_signup(request):
+    if (request.user.is_authenticated):
+        return redirect('/')
+
     if(request.method == 'POST'):
         form = SignUpForm(request.POST)
 
@@ -58,7 +67,7 @@ def request_signup(request):
             user = form.save()
             recommendations = request.COOKIES.get(CONST_RECO_COOKIE_NAME)
             
-            login(request, user)
+            login(request, user, CONST_BASE_BACKEND)
 
             if (is_reco_valid_from_cookies(recommendations)):
                 setattr(user, CONST_RECO_MODEL_NAME, recommendations)
@@ -168,8 +177,6 @@ def search_song(request):
 
 @require_POST
 def get_recommendations(request):
-    form = DiscoverForm(request.POST)
-
     try:
         request_artists = request.POST.getlist('artists[]')[:2]     # Grab list of artists. Limit to 2
         request_tracks = request.POST.getlist('tracks[]')[:2]       # Grab list of tracks. Limit to 2
@@ -206,6 +213,8 @@ def get_recommendations(request):
         )
         response.status_code = 204                                  # Set status code
         return response
+    
+    save_reco_to_user(request.user, recommendations.get('tracks'))
 
     return HttpResponse(                                            # Return parsed data
         json.dumps({'recommendations': recommendations}),
@@ -265,3 +274,30 @@ def is_reco_valid_from_cookies(recommendations):
         return False
     
     return True
+
+def parse_recommendations(recommendations):
+    parsed_recommendations = ''
+
+    for i, reco in enumerate(recommendations):
+        parsed_recommendations += reco.get('id')
+
+        if i != (len(recommendations) - 1):
+            parsed_recommendations += ':'
+    
+    return parsed_recommendations
+
+def save_reco_to_user(user, recommendations):
+    if (user is None):
+        return
+    if (not user.is_authenticated):
+        return
+    if (recommendations is None):
+        return
+    
+    parsedRecommendations = parse_recommendations(recommendations)
+
+    if (parsedRecommendations is None):
+        return
+
+    setattr(user, CONST_RECO_MODEL_NAME, parsedRecommendations)
+    user.save()

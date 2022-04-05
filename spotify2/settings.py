@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #... Social AUTH
+    'social_django',
+    #... Social AUTH
 ]
 
 MIDDLEWARE = [
@@ -48,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'spotify2.urls'
@@ -63,6 +69,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -99,6 +108,36 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Custom Authentication
+
+    # Social AUTH
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.spotify.SpotifyOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    #'spotify2_app.pipeline.send_recommendations'
+    'spotify2_app.pipeline.update_logged_in_user_details'
+)
+
+SOCIAL_AUTH_USER_MODEL = 'spotify2_app.CustomUser'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_SPOTIFY_KEY = 'f5f548e5850e449bacd8396fe552180c'
+SOCIAL_AUTH_SPOTIFY_SECRET = 'cc3e9b6b4c184cbb9d50cf304e2c3686'
+SOCIAL_AUTH_SPOTIFY_SCOPE = ['user-read-email', 'user-library-read']
+    # Social AUTH
 
 AUTH_USER_MODEL = 'spotify2_app.CustomUser'
 LOGIN_REDIRECT_URL = '/'

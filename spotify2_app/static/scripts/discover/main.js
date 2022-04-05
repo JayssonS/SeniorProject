@@ -9,10 +9,10 @@ function determinePageLoad() {
     const hasRecommendations = checkCookiesForRecommendations();
 
     if (hasRecommendations) {
-        window.location.replace('/discover_recommendations');
+        window.location.replace('/discover/recommendations');
         return;
     }
-    window.location.replace('/discover_form');
+    window.location.replace('/discover/tailor');
 }
 
 function checkCookiesForRecommendations() {

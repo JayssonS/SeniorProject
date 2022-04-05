@@ -218,7 +218,7 @@ $(function () {
                 switch (xhr.status) {
                     case 200:
                         writeToStorage(json);
-                        window.location.href = '/discover_recommendations';
+                        window.location.href = '/discover/recommendations';
                         break;
                     case 204:
                         console.log('no recommendations found');
