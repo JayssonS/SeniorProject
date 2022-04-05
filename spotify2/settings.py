@@ -140,8 +140,10 @@ SOCIAL_AUTH_SPOTIFY_SCOPE = ['user-read-email', 'user-library-read']
     # Social AUTH
 
 AUTH_USER_MODEL = 'spotify2_app.CustomUser'
+AUTH_PROFILE_MODULE = 'spotify2_app.UserProfile'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL='login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

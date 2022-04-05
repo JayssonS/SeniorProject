@@ -26,6 +26,9 @@ def social_user(backend, uid, user=None, *args, **kwargs):
             'new_association': social is None}
 
 def update_logged_in_user_details(backend, user, *args, **kwargs):
+    if (backend.name != 'spotify'):
+        return
+
     request = backend.strategy.request
     user = request.user
     user_details = kwargs.get('details')
@@ -35,8 +38,6 @@ def update_logged_in_user_details(backend, user, *args, **kwargs):
     
     if (user_details is None):
         return
-
-    print(user_details)
 
     try:
         setattr(user, 'email', user_details.get('email'))

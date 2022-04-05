@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{% if pUser %}
+    {% if pUser.first_name == '' %}
+        {{pUser.username}}
+    {% else %}
+        {{pUser.first_name}} {{pUser.last_name}}
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}

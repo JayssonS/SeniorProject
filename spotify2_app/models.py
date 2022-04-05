@@ -8,6 +8,12 @@ class CustomUser(AbstractUser):
     uid = models.TextField(default='')
     recommendations = models.TextField(default='')
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
 class Musicdata(models.Model):
     id = models.TextField(primary_key=True)
     name = models.TextField()

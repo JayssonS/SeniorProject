@@ -18,8 +18,8 @@ Discover | Tailor
 <div id="discover-container">
     <div id="discover-tailor-container">
         <center>
-            <h1>DISCOVER</h2>
-                <h4>Tell us a bit about you...</h4>
+            <p class="font-semibold mb-5 text-xl md:text-3xl">
+                Tell us a bit about you...</p>
         </center>
         <div class="hide" id="div-loading-recommendations">
             <div id="div-loading-content">
@@ -29,11 +29,15 @@ Discover | Tailor
                 </div>
             </div>
         </div>
-        <form autocomplete="off" method='none' id="discover-form">
+        <form
+            autocomplete="off"
+            method='none'
+            id="discover-form">
             {% csrf_token %}
             <div class="selection-container" id="genre-select-container">
-                <h3>What is your favorite genre?</h3>
-                <div class="dropdown-divider"></div>
+                <p class="text-lg">
+                    What is your favorite genre?</p>
+                <hr class="border rounded border-neutral-300 m-2">
                 <div id="genre-container">
                     {% for choice in form.genre %}
                     <div>
@@ -45,35 +49,37 @@ Discover | Tailor
 
                     {% endfor %}
                 </div>
-                <div class="dropdown-divider"></div>
+                <hr class="border rounded border-neutral-300 m-2">
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn-cont btn btn-outline-primary">Next</button>
                 </div>
             </div>
             <div class="hide selection-container" id="artist-search-container">
-                <h3>Who are your two favorite artists?</h3>
-                <div class="dropdown-divider"></div>
-                <div class="input-group rounded">
-                    <input type="search" class="search-bar form-control rounded" placeholder="Search"
-                        aria-label="Search" aria-describedby="search-addon" id="artist-search-bar" />
-                    <span class="input-group-text border-0" id="search-addon">
-                        <i class="fas fa-search"></i>
-                    </span>
-                </div>
+                <p class="text-lg">
+                    Who are your two favorite artists?</p>
+                <hr class="border rounded border-neutral-300 m-2">
+                <input
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search" 
+                    aria-describedby="search-addon"
+                    id="artist-search-bar"
+                    class="rounded-full w-full"/>
                 </br>
                 <div id="artist-results-placeholder">
                     <div id="artist-results-selected" class="flex-container">
                     </div>
                 </div>
-                <div class="dropdown-divider"></div>
+                <hr class="border rounded border-neutral-300 m-2">
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn-prev btn btn-outline-primary">Previous</button>
                     <button type="button" class="btn-cont btn btn-outline-primary">Next</button>
                 </div>
             </div>
             <div class="hide selection-container" id="song-search-container">
-                <h3>What are your two favorite songs?</h3>
-                <div class="dropdown-divider"></div>
+                <p class="text-lg">
+                    What are your two favorite songs?</p>
+                <hr class="border rounded border-neutral-300 m-2">
                 <div class="input-group rounded">
                     <input type="search" class="search-bar form-control rounded" placeholder="Search"
                         aria-label="Search" aria-describedby="search-addon" id="song-search-bar" />
@@ -86,7 +92,7 @@ Discover | Tailor
                     <div id="song-results-selected" class="d-flex justify-content-between div-song-results">
                     </div>
                 </div>
-                <div class="dropdown-divider"></div>
+                <hr class="border rounded border-neutral-300 m-2">
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn-prev btn btn-outline-primary">Previous</button>
                     <button type="submit" id="btn-submit" class="btn btn-success">Submit</button>
