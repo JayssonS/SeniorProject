@@ -35,7 +35,7 @@ const STRING_API_ARTIST = 'search_artist';
 const INT_TYPING_TIMEOUT = 300;
 const INT_MAX_ARTIST_SELECTED = 2;
 
-let setSelectedArtists = new Set();
+let setSelectedArtists = new Set('yes');
 
 // #endregion varsArtist
 
@@ -57,7 +57,7 @@ let setSelectedSongs = new Set();
 
 const STRING_CLASS_GENRE_CHOICE = 'choice-genre';
 
-let selectedGenre = '';
+let selectedGenre = 'yes';
 
 // #endregion varsGenre
 
@@ -394,7 +394,7 @@ $(function () {
                         <label
                             for="${arrSongs[i]['id']}"
                             class="
-                                flex justify-between rounded-xl bg-primary-content w-full cursor-pointer
+                                grid rounded-xl bg-primary-content w-full cursor-pointer
                                 h-[80px] hover:bg-primary
                                 peer-checked:bg-green-600 peer-checked:text-white
                                 peer-checked:hover:bg-red-600">
@@ -406,10 +406,11 @@ $(function () {
                                 encrypted-media;
                                 fullscreen;
                                 picture-in-picture"
-                                class="h-full rounded-l-xl"
-                                width="90%"
+                                style="width:calc(100% - 60px)"
+                                class="row-start-1 col-start-1 h-full rounded-l-xl"
                                 frameborder="0"></iframe>
-                            <span class="select-none p-5 text-3xl text-primary">
+                            <span 
+                                class="row-start-1 col-start-1 text-right w-full select-none p-5 text-3xl text-primary hover:text-white">
                                 +
                             </span>
                         </label>
