@@ -37,6 +37,8 @@ def user_profile(request, username):
 # Views relating to login functionality
 
 def request_login(request):
+    print(request.path)
+    print(request.get_full_path)
     """ if (request.user.is_authenticated):
         return redirect('/') """
 

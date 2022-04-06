@@ -1,0 +1,38 @@
+<div class="navbar bg-neutral mb-5">
+    <div class="flex-1">
+        <a class="btn btn-ghost normal-case text-xl" href="/">Spotify2</a>
+    </div>
+    <div class="flex-none">
+        <div class="md:flex-none mr-3">
+            <ul class="menu menu-horizontal p-0">
+                <li><a href="/discover">Discover</a></li>
+            </ul>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full">
+                    <img src="https://api.lorem.space/image/face?hash=33791" />
+                </div>
+            </label>
+            <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
+                <li>
+                    <a class="justify-between" href="/u/{{ user.get_username }}">
+                        Profile
+                    </a>
+                </li>
+                <li><a>Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+        {% elif request.path == '/login/' %}
+        <div class="navbar-end">
+            <a class="btn bg-primary hover:bg-primary-focus text-white" href="/signup">Signup</a>
+        </div>
+        {% else %}
+        <div class="navbar-end">
+            <a class="btn bg-primary hover:bg-primary-focus text-white" href="/login">Login</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
