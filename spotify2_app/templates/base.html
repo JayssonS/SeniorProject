@@ -1,7 +1,7 @@
 {% load static %}
 
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
 
 <head>
 	{% block head %}
@@ -19,6 +19,7 @@
 	</title>
 
 	<!-- Tailwind CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@2.13.6/dist/full.css" rel="stylesheet" type="text/css" />
 	<script src="https://cdn.tailwindcss.com"></script>
 
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/trianglify/0.1.2/trianglify.min.js">
@@ -39,7 +40,7 @@
 	</script>
 </head>
 
-<body class="bg-[#f2f4f5]">
+<body>
 	<nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-neutral-900 mb-3">
 		<div class="flex flex-row justify-between">
 			<a href="/">
@@ -92,11 +93,15 @@
 		{% endblock %}
 	</div>
 
+	{% block scripts %}
+	{% endblock %}
+
+	<span class="mb-5">
+	</span>
+
 	<!-- Install Ajax and run custom javascript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	{% block scripts %}
-	{% endblock %}
 </body>
 
 </html>

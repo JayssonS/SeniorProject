@@ -1,6 +1,7 @@
 // #region varsMultiStep
 
 const STRING_ID_BUTTON_SUBMIT = 'btn-submit';
+const STRING_CLASS_HIDDEN = 'hidden';
 
 let stage = 0;
 const stageViews = {
@@ -64,7 +65,6 @@ let selectedGenre = '';
 
 const STRING_ID_ALERT = 'alert-form-error';
 const STRING_ID_ALERT_BUTTON = 'alert-btn-dismiss';
-const STRING_ID_ALERT_TEXT = 'alert-text';
 
 const arrAlertErrors = {
     'genre-select-container': 'You must select a genre!',
@@ -87,21 +87,21 @@ $(function () {
         }
         hideAlert();
 
-        $(`#${stageViews[stage]}`).addClass('hide');            // Add hidden class to current object
+        $(`#${stageViews[stage]}`).addClass(STRING_CLASS_HIDDEN);            // Add hidden class to current object
 
         stage += 1;                                             // Set stage statically
 
-        $(`#${stageViews[stage]}`).removeClass('hide');         // Remove hidden class from next view
+        $(`#${stageViews[stage]}`).removeClass(STRING_CLASS_HIDDEN);         // Remove hidden class from next view
     });
 
     $('.btn-prev').on('click', function () {
         hideAlert();
 
-        $(`#${stageViews[stage]}`).addClass('hide');            // Add hidden class to current object
+        $(`#${stageViews[stage]}`).addClass(STRING_CLASS_HIDDEN);            // Add hidden class to current object
 
         stage -= 1;                                             // Set stage statically
 
-        $(`#${stageViews[stage]}`).removeClass('hide');         // Remove hidden class from next view
+        $(`#${stageViews[stage]}`).removeClass(STRING_CLASS_HIDDEN);         // Remove hidden class from next view
     });
 
     // #endregion Multistep
@@ -116,7 +116,7 @@ $(function () {
         if (selectedGenre === '') return;                   // No selected genre, return
         if (setSelectedArtists.size === 0) return;          // No artists selected, return
         if (setSelectedSongs.size === 0) {                  // No songs selected, return
-            showAlert('song');
+            showAlert(stageViews[stage]);
             return;
         }
         if (submitted) return;                              // Don't allow form submittion more than once
@@ -201,10 +201,10 @@ $(function () {
         const arrSongs = Array.from(setSelectedSongs);
         submitted = true;
 
-        $(`#${STRING_ID_LOADING_CONTAINER}`).removeClass('hide');       // Show loading overlay
+        $(`#${STRING_ID_LOADING_CONTAINER}`).removeClass(STRING_CLASS_HIDDEN);       // Show loading overlay
 
         $.ajax({                                                        // Make API call
-            url: 'api/get_recommendations/',                            // API endpoint URL
+            url: '/api/get_recommendations/',                            // API endpoint URL
             type: 'POST',                                               // API request type
             headers: {                                                  // Headers, must include token for valid call
                 'X-CSRFToken': getCookie('csrftoken')
@@ -246,6 +246,9 @@ $(function () {
         let span = element.children('label').children('span');          // Get span inside label in div
         let divResults = $(`#${STRING_ID_ARTIST_RESULTS}`);             // Get div results
         let divSelected = $(`#${STRING_ID_ARTIST_SELECTED}`);           // Get div selected
+        
+        id = id.replace('div-', '').replaceAll('-', ' ');
+        console.log(id);
 
         if (setSelectedArtists.has(id)) {
             element.appendTo(divResults);                               // Move to new div
@@ -281,28 +284,35 @@ $(function () {
             .append(                                            // Append container
                 $('<div>').prop({
                     id: STRING_ID_ARTIST_RESULTS,
-                    class: "flex-container"
+                    class: "flex flex-wrap flex-row"
                 })
             );
 
         for (let i = 0; i < arrArtists.length; i++) {           // For every artist
             const artistID = arrArtists[i].replace(/ /g, '-');
 
-            if (setSelectedArtists.has(`div-${artistID}`)) {
+            if (setSelectedArtists.has(arrArtists[i])) {
                 continue;
             }
             $(`#${STRING_ID_ARTIST_RESULTS}`)                   // Append a container
                 .append(`
                     <div
                         id="div-${artistID}"
-                        class="${STRING_CLASS_DIV_RESULT} noselect">
+                        class="${STRING_CLASS_DIV_RESULT} select-none m-2">
                         <input
                             type="checkbox"
                             name="artists"
                             value="${arrArtists[i]}"
-                            id="${artistID}">
+                            id="${artistID}"
+                            class="sr-only peer">
                         <label
-                            for="${artistID}">
+                            for="${artistID}"
+                            class="
+                                rounded-full border-2 border-primary h-full block bg-primary-content p-2 text-primary
+                                cursor-pointer
+                                hover:bg-primary hover:text-white
+                                peer-checked:bg-green-600 peer-checked:border-0 peer-checked:text-white
+                                peer-checked:hover:bg-red-600">
                             ${arrArtists[i]}
                                 <span
                                     class="span">
@@ -319,27 +329,29 @@ $(function () {
     // #region Songs
 
     // Handle artist button clicks
-    $(`#${STRING_ID_SONG_STATIC_DIV}`).on('click', `.${STRING_CLASS_SONG_BUTTON}`, function (event) {
+    $(`#${STRING_ID_SONG_STATIC_DIV}`).on('change', `.${STRING_CLASS_SONG_BUTTON}`, function (event) {
         let element = $(this);                                          // Get element
         let id = element.attr('id');                                    // Get element id
-        let text = element.children('.span-sign-song');                 // Get element text
+        let span = element.children('label').children('span');          // Get span inside label in div
+        let checkbox = element.children('input');                       // Get checkbox inside div
         let divResults = $(`#${STRING_ID_SONG_RESULTS}`);               // Get div containing results
         let divSelected = $(`#${STRING_ID_SONG_SELECTED}`);             // Get div containing selections
 
+        id = id.replace('div-', '');
+        console.log(id);
+
         if (setSelectedSongs.has(id)) {
             element.appendTo(divResults);                               // Move to new div
-            text.html('+');
-            element.removeClass(`${STRING_CLASS_BTN_SONG_SELECTED}`);   // Remove styling class
+            span.html('+');
             setSelectedSongs.delete(id);                                // Remove from set
             return;
         }
         if (setSelectedSongs.size >= INT_MAX_SONG_SELECTED) {           // If max selected artists hit
-            console.log("returning... over limit");
+            checkbox.prop('checked', false);
             return;                                                     // Return
         }
         element.appendTo(divSelected);                                  // Move to new div
-        text.html('-');
-        element.addClass(`${STRING_CLASS_BTN_SONG_SELECTED}`);          // Add new styling class
+        span.html('-');
         setSelectedSongs.add(id);                                       // Add to set
     });
 
@@ -361,7 +373,7 @@ $(function () {
             .append(                                            // Append container
                 $('<div>').prop({
                     id: STRING_ID_SONG_RESULTS,
-                    class: "d-flex justify-content-between div-song-results"
+                    class: "grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center"
                 })
             );
         for (let i = 0; i < arrSongs.length; i++) {             // For every song
@@ -370,24 +382,37 @@ $(function () {
             }
             $(`#${STRING_ID_SONG_RESULTS}`)                     // Append a container
                 .append(`
-                    <div
-                        class="d-flex justify-content-between ${STRING_CLASS_SONG_BUTTON}"
-                        id=${arrSongs[i]['id']}
-                    >
-                        <iframe 
-                            style="border-radius:12px" 
-                            src="https://open.spotify.com/embed/track/${arrSongs[i]['id']}?utm_source=generator" 
-                            width="90%"
-                            height="80px"
-                            frameBorder="0" 
-                            allowfullscreen=""
-                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-                        </iframe>
-                        <span
-                            class="span-sign-song noselect"
-                        >
-                            +
-                        </span>
+                    <div 
+                        class="w-full m-0 ${STRING_CLASS_SONG_BUTTON}"
+                        id="div-${arrSongs[i]['id']}">
+                        <input
+                            type="checkbox"
+                            name="songs"
+                            value="${arrSongs[i]['id']}"
+                            id="${arrSongs[i]['id']}"
+                            class="sr-only peer">
+                        <label
+                            for="${arrSongs[i]['id']}"
+                            class="
+                                flex justify-between rounded-xl bg-primary-content m-1 w-full cursor-pointer
+                                h-[80px] hover:bg-primary
+                                peer-checked:bg-green-600 peer-checked:text-white
+                                peer-checked:hover:bg-red-600">
+                            <iframe
+                            src="https://open.spotify.com/embed/track/${arrSongs[i]['id']}?utm_source=generator"
+                                allowfullscreen=""
+                                allow="autoplay;
+                                clipboard-write;
+                                encrypted-media;
+                                fullscreen;
+                                picture-in-picture"
+                                class="h-full rounded-l-xl"
+                                width="90%"
+                                frameborder="0"></iframe>
+                            <span class="select-none p-5 text-3xl text-primary">
+                                +
+                            </span>
+                        </label>
                     </div>
                 `);
         }
@@ -430,12 +455,12 @@ $(function () {
 
     function showAlert(error) {
         const alert = $(`#${STRING_ID_ALERT}`);
-        const alertText = alert.children(`#${STRING_ID_ALERT_TEXT}`);
+        const alertText = alert.children('div').children('span');
 
         alert.animate({
-            bottom: '0'
+            bottom: '20px'
         }, 500);
-        alertText.text(arrAlertErrors[error]);
+        alertText.html(arrAlertErrors[error]);
     }
 
     function hideAlert() {
