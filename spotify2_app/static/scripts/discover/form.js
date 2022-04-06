@@ -394,7 +394,7 @@ $(function () {
                         <label
                             for="${arrSongs[i]['id']}"
                             class="
-                                flex justify-between rounded-xl bg-primary-content m-1 w-full cursor-pointer
+                                flex justify-between rounded-xl bg-primary-content w-full cursor-pointer
                                 h-[80px] hover:bg-primary
                                 peer-checked:bg-green-600 peer-checked:text-white
                                 peer-checked:hover:bg-red-600">
