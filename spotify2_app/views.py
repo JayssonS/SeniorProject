@@ -4,7 +4,10 @@ import re
 from django.shortcuts import redirect, render
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_GET, require_POST
-from django.contrib.auth import login, authenticate
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.contrib import messages
 from .models import *
 from .forms import *
@@ -34,15 +37,26 @@ def user_profile(request, username):
 
     return render(request, 'profile/user_profile.html', {'pUser': user})
 
+@login_required
+def user_settings(request):
+    if (request.method == 'POST'):
+        print(request.POST)
+        if (request.POST.__contains__('username')):
+            change_username(request)
+
+        if (request.POST.__contains__('password')):
+            change_password(request)
+
+    return render(request, 'profile/user_settings.html')
+
 # Views relating to login functionality
 
 def request_login(request):
-    print(request.path)
-    print(request.get_full_path)
     """ if (request.user.is_authenticated):
         return redirect('/') """
 
     if (request.method == 'POST'):
+        print(request.POST)
         form = LoginForm(request, data=request.POST)
 
         if form.is_valid():
@@ -312,3 +326,39 @@ def save_reco_to_user(user, recommendations):
 
     setattr(user, CONST_RECO_MODEL_NAME, parsedRecommendations)
     user.save()
+
+def change_username(request):
+    request_new_username = request.POST.get('username')
+
+    if (len(request_new_username) <= 4):
+        print("invalid username")
+        return
+
+    if (not CustomUser.objects.filter(username=request_new_username).exists()):
+        request.user.username = request_new_username
+
+        request.user.save()
+
+def change_password(request):
+    request_new_pass = request.POST.get('newpassword')
+    current_pass = request.user.password
+    request_old_pass = request.POST.get('password')
+
+    if ('pbkdf2_sha256' in request.user.password):
+        is_pass_correct = check_password(request_old_pass, current_pass)
+    
+        if (not is_pass_correct):
+            print('invalid old password')
+            return
+        
+    try:
+        validate_password(request_new_pass, request.user)
+    except:
+        print("Invalid new password")
+        return
+    
+    new_password = make_password(request_new_pass)
+    request.user.password = new_password
+
+    request.user.save()
+    update_session_auth_hash(request, request.user)
