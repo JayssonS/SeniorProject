@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head %}
+<script>
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        email: "{{ user.email }}",
+        uid: "{{ user.uid }}",
+        recommendations: "{{ user.recommendations }}",
+    };
+</script>
+{% endblock %}
+
+{% block title %}
+
+{% if user.first_name == '' %}
+    {{user.username}}
+{% else %}
+    {{user.first_name}} {{user.last_name}}
+{% endif %}
+ - Settings
+{% endblock %}
+
+{% block content %}
+
+<div class="m-[-1.25rem] bg-neutral p-5 rounded-b-xl">
+    <span class="text-xl md:text-3xl text-bold">User Account Settings</span>
+    <div class="divider before:bg-[#a6adba] after:bg-[#a6adba] mt-0 pt-0"></div>
+    <div class="w-full">
+        <form 
+            method="post" 
+            action="." 
+            class="w-full h-12
+            flex justify-between w-full h-8 rounded-xl p-3">
+            {% csrf_token %}
+            <span class="font-bold mt-1 max-w-200 w-200">Username</span>
+            <input 
+                type="text" 
+                name="username"
+                value="{{ user.username }}" 
+                class="input h-8 m-0 w-full max-w-xs">
+            <button class="btn bg-primary hover:bg-primary-focus text-white h-8 min-h-8" href="/signup">Edit</button>
+        </form>
+        <div class="divider mt-5 mb-0 pt-0"></div>
+    </div>
+    <div class="w-full">
+        <form 
+            method="post" 
+            action="." 
+            class="w-full h-12
+            flex justify-between w-full h-8 rounded-xl p-3">
+            {% csrf_token %}
+            <span class="font-bold mt-1 max-w-200 w-200">Password</span>
+            {% if 'pbkdf2_sha256' in user.password %}
+                <input 
+                    required
+                    type="password" 
+                    name="password"
+                    placeholder="Current password"
+                    class="input h-8 m-0 w-full max-w-xs">
+                <input 
+                    required
+                    type="password" 
+                    name="newpassword"
+                    placeholder="New password"
+                    class="input h-8 m-0 w-full max-w-xs">
+            {% else %}
+                <input 
+                    required
+                    class="hidden"
+                    name="password"></input>
+                <input 
+                    required
+                    type="password" 
+                    name="newpassword"
+                    placeholder="Set a password"
+                    class="input h-8 m-0 w-full max-w-xs">
+            {% endif %}
+            <button class="btn bg-primary hover:bg-primary-focus text-white h-8 min-h-8" href="/signup">Edit</button>
+        </form>
+        <div class="divider mt-5 mb-0 pt-0"></div>
+    </div>
+    <div class="divider before:bg-[#a6adba] after:bg-[#a6adba] pt-0"></div>
+</div>
+
+<script src="{% static 'scripts/profile/user_settings.js' %}"></script>
+{% endblock %}

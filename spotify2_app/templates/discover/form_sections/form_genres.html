@@ -1,0 +1,30 @@
+<div class="selection-container" id="genre-select-container">
+    <p class="text-lg">
+        What is your favorite genre?</p>
+    <div class="divider"></div>
+    <div id="genre-container" class="
+        flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
+        gap-x-0 gap-y-10 place-items-center">
+
+        {% for choice in form.genre %}
+        <div class="flex">
+            <input type="radio" name="{{ choice.data.name }}" value="{{ choice.data.value }}"
+                id="{{ choice.data.attrs.id }}" class="sr-only peer choice-genre">
+            <label for="{{ choice.data.attrs.id }}" class="select-none text-center place-items-center
+                w-52 h-20 m-0 rounded-xl p-5 bg-primary-content text-primary cursor-pointer
+                border-2 border-primary
+                hover:bg-primary hover:text-primary-content
+                peer-checked:bg-[#6419e6] peer-checked:text-white">
+                <span class="align-middle">
+                    {{ choice.data.label }}</span></label>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="divider"></div>
+    <div class="flex justify-end">
+        <button type="button" class="
+            btn-cont rounded text-primary border-2 border-primary px-5 py-2 text-center mr-3
+            hover:bg-primary hover:text-white">
+            Next</button>
+    </div>
+</div>

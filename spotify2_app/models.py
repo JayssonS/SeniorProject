@@ -1,4 +1,5 @@
 from email.policy import default
+from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -46,3 +47,23 @@ class Artistdata(models.Model):
     genres = models.TextField()
     name = models.TextField()
     popularity = models.IntegerField()
+
+class TrackLike(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    track = models.ForeignKey(Musicdata, on_delete=models.CASCADE)
+
+class TrackDislike(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    track = models.ForeignKey(Musicdata, on_delete=models.CASCADE)
+
+class Playlist(models.Model):
+    name = models.CharField(max_length=50)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    tracks = models.ManyToManyField(Musicdata, through='PlaylistTrack')
+
+class PlaylistTrack(models.Model):
+    playlist = models.ForeignKey('Playlist', on_delete=models.CASCADE)
+    track = models.ForeignKey('MusicData', on_delete=models.CASCADE)

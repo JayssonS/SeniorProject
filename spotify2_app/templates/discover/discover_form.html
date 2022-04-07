@@ -31,109 +31,12 @@ Discover - Tailor
             method='none'
             id="discover-form">
             {% csrf_token %}
-            <div class="selection-container" id="genre-select-container">
-                <p class="text-lg">
-                    What is your favorite genre?</p>
-                <div class="divider"></div> 
-                <div 
-                    id="genre-container"
-                    class="
-                        flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
-                        gap-x-0 gap-y-10 place-items-center">
-                          
-                    {% for choice in form.genre %}
-                    <div class="flex">
-                        <input 
-                            type="radio"
-                            name="{{ choice.data.name }}"
-                            value="{{ choice.data.value }}"
-                            id="{{ choice.data.attrs.id }}"
-                            class="sr-only peer choice-genre">
-                        <label 
-                            for="{{ choice.data.attrs.id }}"
-                            class="select-none text-center place-items-center
-                                w-52 h-20 m-0 rounded-xl p-5 bg-primary-content text-primary cursor-pointer
-                                border-2 border-primary
-                                hover:bg-primary hover:text-primary-content
-                                peer-checked:bg-[#6419e6] peer-checked:text-white">
-                            <span
-                                class="align-middle">
-                                {{ choice.data.label }}</span></label>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="divider"></div> 
-                <div class="flex justify-end">
-                    <button 
-                        type="button" 
-                        class="
-                            btn-cont rounded text-primary border-2 border-primary px-5 py-2 text-center mr-3
-                            hover:bg-primary hover:text-white">
-                            Next</button>
-                </div>
-            </div>
-            <div class="hidden selection-container" id="artist-search-container">
-                <p class="text-lg">
-                    Who are your two favorite artists?</p>
-                <div class="divider"></div> 
-                <input
-                    type="text"
-                    placeholder="Search for artists..."
-                    id="artist-search-bar"
-                    class="search-bar w-full input input-bordered mb-4"/>
-                <div id="artist-results-placeholder">
-                    <div id="artist-results-selected" class="flex flex-wrap flex-row">
-                    </div>
-                </div>
-                <div class="divider"></div> 
-                <div class="flex justify-between">
-                    <button 
-                        type="button" 
-                        class="
-                            btn-prev rounded text-primary border-2 border-primary px-5 py-2 text-center mr-3
-                            hover:bg-primary hover:text-white">
-                            Previous</button>
-                    <button 
-                        type="button" 
-                        class="
-                            btn-cont rounded text-primary border-2 border-primary px-5 py-2 text-center mr-3
-                            hover:bg-primary hover:text-white">
-                            Next</button>
-                </div>
-            </div>
-            <div class="hidden selection-container" id="song-search-container">
-                <p class="text-lg">
-                    What are your two favorite songs?</p>
-                <div class="divider"></div>
-                <input
-                    type="text"
-                    placeholder="Search for artists..."
-                    id="song-search-bar"
-                    class="search-bar w-full input input-bordered mb-4"/>
-                <div id="song-results-placeholder">
-                    <div id="song-results-selected" class="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
-                    </div>
-                </div>
-                <div class="divider"></div> 
-                <div class="flex justify-between">
-                    <button 
-                        type="button" 
-                        class="
-                            btn-prev rounded text-primary border-2 border-primary px-5 py-2 text-center mr-3
-                            hover:bg-primary hover:text-white">
-                            Previous</button>
-                    <button 
-                        type="submit" 
-                        id="btn-submit" 
-                        class="
-                            btn-success rounded text-white bg-green-600 hover:bg-green-300 px-5 py-2 
-                            text-center mr-3">
-                            Submit</button>
-                </div>
-            </div>
+            {% include "discover/form_sections/form_genres.html" %}
+            {% include "discover/form_sections/form_artists.html" %}
+            {% include "discover/form_sections/form_songs.html" %}
         </form>
     </div>
-    <div class="alert alert-error w-1/3 bottom-[-20%] inset-x-0 mx-auto fixed shadow-lg" id="alert-form-error">
+    <div class="alert alert-error select-none w-1/3 bottom-[-20%] inset-x-0 mx-auto fixed shadow-lg" id="alert-form-error">
         <div>
             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <span>placeholder</span>

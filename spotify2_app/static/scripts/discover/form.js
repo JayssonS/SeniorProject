@@ -1,6 +1,5 @@
 // #region varsMultiStep
 
-const STRING_ID_BUTTON_SUBMIT = 'btn-submit';
 const STRING_CLASS_HIDDEN = 'hidden';
 
 let stage = 0;
@@ -16,7 +15,6 @@ const stageViews = {
 
 const STRING_ID_LOADING_CONTAINER = 'div-loading-recommendations';
 const STRING_CLASS_DIV_RESULT = 'div-search-result';
-const STRING_ID_DISCOVER_CONTAINER = 'discover-container';
 const STRING_VAR_STORAGE_RECO = 'songreco';
 const INT_KEYWORD_MIN_LENGTH = 2;
 
@@ -44,7 +42,6 @@ let setSelectedArtists = new Set();
 const STRING_ID_SONG_STATIC_DIV = 'song-results-placeholder';
 const STRING_ID_SONG_RESULTS = 'song-results-container';
 const STRING_ID_SONG_SELECTED = 'song-results-selected';
-const STRING_CLASS_BTN_SONG_SELECTED = 'btn-song-result-selected';
 const STRING_CLASS_SONG_BUTTON = 'btn-song-result';
 const STRING_API_SONG = 'search_song';
 const INT_MAX_SONG_SELECTED = 2;
@@ -332,7 +329,7 @@ $(function () {
     $(`#${STRING_ID_SONG_STATIC_DIV}`).on('change', `.${STRING_CLASS_SONG_BUTTON}`, function (event) {
         let element = $(this);                                          // Get element
         let id = element.attr('id');                                    // Get element id
-        let span = element.children('label').children('span');          // Get span inside label in div
+        let span = element.children('label');          // Get span inside label in div
         let checkbox = element.children('input');                       // Get checkbox inside div
         let divResults = $(`#${STRING_ID_SONG_RESULTS}`);               // Get div containing results
         let divSelected = $(`#${STRING_ID_SONG_SELECTED}`);             // Get div containing selections
@@ -383,7 +380,7 @@ $(function () {
             $(`#${STRING_ID_SONG_RESULTS}`)                     // Append a container
                 .append(`
                     <div 
-                        class="w-full m-0 ${STRING_CLASS_SONG_BUTTON}"
+                        class="w-full h-[80px] flex flex-row flex-wrap m-0 ${STRING_CLASS_SONG_BUTTON}"
                         id="div-${arrSongs[i]['id']}">
                         <input
                             type="checkbox"
@@ -391,14 +388,7 @@ $(function () {
                             value="${arrSongs[i]['id']}"
                             id="${arrSongs[i]['id']}"
                             class="sr-only peer">
-                        <label
-                            for="${arrSongs[i]['id']}"
-                            class="
-                                flex justify-between rounded-xl bg-primary-content m-1 w-full cursor-pointer
-                                h-[80px] hover:bg-primary
-                                peer-checked:bg-green-600 peer-checked:text-white
-                                peer-checked:hover:bg-red-600">
-                            <iframe
+                        <iframe
                             src="https://open.spotify.com/embed/track/${arrSongs[i]['id']}?utm_source=generator"
                                 allowfullscreen=""
                                 allow="autoplay;
@@ -406,12 +396,19 @@ $(function () {
                                 encrypted-media;
                                 fullscreen;
                                 picture-in-picture"
-                                class="h-full rounded-l-xl"
-                                width="90%"
+                                style="width:calc(100% - 60px)"
+                                class="
+                                bg-neutral h-full rounded-l-xl"
                                 frameborder="0"></iframe>
-                            <span class="select-none p-5 text-3xl text-primary">
+                        <label
+                            for="${arrSongs[i]['id']}"
+                            class="
+                                rounded-r-xl bg-primary-content w-[60px] cursor-pointer pt-4
+                                text-primary text-3xl text-center font-semibold
+                                hover:bg-primary hover:text-white hover:bg-primary
+                                peer-checked:bg-green-600 peer-checked:text-white
+                                peer-checked:hover:bg-red-600">
                                 +
-                            </span>
                         </label>
                     </div>
                 `);
