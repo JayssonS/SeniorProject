@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from . import views
+from .views import views
 
 app_name = 'spotify2_app'
 
