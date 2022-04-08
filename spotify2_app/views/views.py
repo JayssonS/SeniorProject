@@ -1,7 +1,13 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+
+from social_core.actions import do_complete
+from social_django.utils import psa
+from social_django.views import _do_login
 
 from ..consts import *
 from ..models import *
@@ -19,6 +25,25 @@ def user_profile(request, username):
     user = CustomUser.objects.get(username=username)
 
     return render(request, 'profile/user_profile.html', {'pUser': user})
+
+# Spotify Login Complete override to set cookies to a user logging in with spotify
+@never_cache
+@csrf_exempt
+@psa(f'spotify2_app:complete')
+def complete(request, backend, *args, **kwargs):
+    """Authentication complete view"""
+    print("Do complete override")
+    response = do_complete(request.backend, _do_login, user=request.user,
+                       redirect_name=REDIRECT_FIELD_NAME, request=request,
+                       *args, **kwargs)
+    
+    try:
+        response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(request.user, CONST_RECO_MODEL_NAME), samesite='Lax')
+    except:
+        print("Couldn't set recommendations to cookies!")
+
+    return response
+
 
 @login_required
 def user_settings(request):

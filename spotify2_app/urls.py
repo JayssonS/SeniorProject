@@ -3,9 +3,19 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from .views import views
 
+"""URLs module"""
+from django.conf import settings
+from django.urls import path
+
+from social_core.utils import setting_name
+
+extra = getattr(settings, setting_name('TRAILING_SLASH'), True) and '/' or ''
 app_name = 'spotify2_app'
 
 urlpatterns = [
+    path(f'social/complete/<str:backend>{extra}', views.complete,
+         name='complete'),
+
     path('', views.home, name='home'),
 
     # Recommendation form

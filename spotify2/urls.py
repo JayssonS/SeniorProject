@@ -18,9 +18,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', include('spotify2_app.urls')),
     
     #... Social AUTH
     path('social/', include('social_django.urls')),
-
-    path('', include('spotify2_app.urls')),
 ]
