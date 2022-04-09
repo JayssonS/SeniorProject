@@ -4,3 +4,8 @@ SPOTIPY_CLIENT_SECRET='cc3e9b6b4c184cbb9d50cf304e2c3686'
 CONST_RECO_COOKIE_NAME = 'songreco'
 CONST_RECO_MODEL_NAME = 'recommendations'
 CONST_BASE_BACKEND = 'django.contrib.auth.backends.ModelBackend'
+
+CONST_COOKIE_DURATION = 60 * 60 * 24
+
+CONST_TRACK_LIKED = False
+CONST_TRACK_DISLIKED = True

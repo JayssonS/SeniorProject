@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from .views import views
+from .views import views, api
 
 """URLs module"""
 from django.conf import settings
@@ -18,6 +18,9 @@ urlpatterns = [
 
     path('', views.home, name='home'),
 
+    # Explore Page
+    path('explore/', views.explore, name='explore'),
+
     # Recommendation form
     path('discover/', views.discover_main, name='discover'),
     path('discover/recommendations/', views.discover_recommendations, name='discover_recommendations'),
@@ -27,6 +30,7 @@ urlpatterns = [
     path('api/search_artist/', views.search_artist, name='search_artist'),
     path('api/search_song/', views.search_song, name='search_song'),
     path('api/get_recommendations/', views.get_recommendations, name='get_recommendations'),
+    path('api/interact_track/', api.interact_track, name='interact_track'),
 
     # User auth
     path('signup/', views.request_signup, name = 'signup'),
@@ -34,7 +38,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
 
     # User account related
-    url(r'^u/(?P<username>\w+)/$', views.user_profile, name='user-profile'),
+    url(r'^u/(?P<username>\w+)/$', views.user_profile, name='user_profile'),
     path('settings/', views.user_settings, name = 'settings'),
 ]
  

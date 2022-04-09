@@ -48,13 +48,10 @@ class Artistdata(models.Model):
     name = models.TextField()
     popularity = models.IntegerField()
 
-class TrackLike(models.Model):
+class TrackInteraction(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     track = models.ForeignKey(Musicdata, on_delete=models.CASCADE)
-
-class TrackDislike(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    track = models.ForeignKey(Musicdata, on_delete=models.CASCADE)
+    disliked = models.BooleanField(default=False)
 
 class Playlist(models.Model):
     name = models.CharField(max_length=50)

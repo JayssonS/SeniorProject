@@ -128,3 +128,27 @@ def change_password(request):
 
     request.user.save()
     update_session_auth_hash(request, request.user)
+
+def interact_track_helper(user, trackId, flag):
+    trackFilter = Musicdata.objects.filter(id=trackId)
+
+    if (not trackFilter.exists()):
+        return 500
+    
+    track = trackFilter.get()
+    trackInteractionFilter = TrackInteraction.objects.filter(user=user, track=track)
+
+    if (trackInteractionFilter.exists()):
+        trackInteraction = trackInteractionFilter.get()
+
+        if (trackInteraction.disliked == bool(flag)):
+            trackInteraction.delete()
+            return 204
+        else:
+            trackInteraction.disliked = flag
+            
+            trackInteraction.save()
+    else:
+        TrackInteraction.objects.create(user=user, track=track, disliked=flag)
+
+    return 200

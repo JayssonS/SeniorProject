@@ -20,6 +20,10 @@ from .view_helpers import *
 def home(request):
     return render(request, 'base.html')
 
+# Explore page views
+def explore(request):
+    return render(request, 'explore/explore.html')
+
 # Views relating to user profiles
 def user_profile(request, username):
     user = CustomUser.objects.get(username=username)
@@ -38,7 +42,7 @@ def complete(request, backend, *args, **kwargs):
                        *args, **kwargs)
     
     try:
-        response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(request.user, CONST_RECO_MODEL_NAME), samesite='Lax')
+        response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(request.user, CONST_RECO_MODEL_NAME), samesite='Lax', max_age=CONST_COOKIE_DURATION)
     except:
         print("Couldn't set recommendations to cookies!")
 
@@ -80,7 +84,7 @@ def request_login(request):
 
                 response = redirect('/')
 
-                response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(user, CONST_RECO_MODEL_NAME), samesite='Lax')
+                response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(user, CONST_RECO_MODEL_NAME), samesite='Lax', max_age=CONST_COOKIE_DURATION)
                 return response
             else:
                 messages.error(request, "Invalid username or password.")

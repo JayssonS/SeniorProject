@@ -5,7 +5,8 @@
     <div class="flex-none">
         <div class="md:flex-none mr-3">
             <ul class="menu menu-horizontal p-0">
-                <li><a href="/discover">Discover</a></li>
+                <li><a href="{% url 'spotify2_app:discover' %}">Discover</a></li>
+                <li><a href="{% url 'spotify2_app:explore' %}">Explore</a></li>
             </ul>
         </div>
         {% if user.is_authenticated %}
@@ -17,21 +18,21 @@
             </label>
             <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
                 <li>
-                    <a class="justify-between" href="/u/{{ user.get_username }}">
+                    <a class="justify-between" href="{% url 'spotify2_app:user_profile' user.username %}">
                         Profile
                     </a>
                 </li>
-                <li><a href='/settings'>Settings</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="{% url 'spotify2_app:settings' %}">Settings</a></li>
+                <li><a href="{% url 'spotify2_app:logout' %}">Logout</a></li>
             </ul>
         </div>
         {% elif request.path == '/login/' %}
         <div class="navbar-end">
-            <a class="btn bg-primary hover:bg-primary-focus text-white" href="/signup">Signup</a>
+            <a class="btn bg-primary hover:bg-primary-focus text-white" href="{% url 'spotify2_app:signup' %}">Signup</a>
         </div>
         {% else %}
         <div class="navbar-end">
-            <a class="btn bg-primary hover:bg-primary-focus text-white" href="/login">Login</a>
+            <a class="btn bg-primary hover:bg-primary-focus text-white" href="{% url 'spotify2_app:login' %}">Login</a>
         </div>
         {% endif %}
     </div>

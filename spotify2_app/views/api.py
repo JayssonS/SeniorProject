@@ -1,5 +1,6 @@
 from django.http import HttpResponseBadRequest, HttpResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 
 from ..consts import *
 from ..models import *
@@ -13,6 +14,8 @@ import json
 # API endpoints
 
 def search_artist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         keyword = request.POST['keyword']                   # Grab keyword from post
     except:
@@ -59,6 +62,8 @@ def search_artist(request):
     )
 
 def search_song(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         keyword = request.POST['keyword']                   # Get keyword from post data
     except:
@@ -94,8 +99,37 @@ def search_song(request):
         content_type='application/json'
     )                                                       # Return queried data
 
-@require_POST
+@csrf_exempt
+def interact_track(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    if (request.user is None):
+        print("No user!")
+        return HttpResponseBadRequest()
+
+    if (not request.user.is_authenticated):
+        print("User not authed")
+        return HttpResponseBadRequest()
+
+    try:
+        trackId = request.POST['track_id']
+        interactFlag = request.POST['interact_flag']
+        track_interaction = interact_track_helper(request.user, trackId, bool(int(interactFlag)))
+
+        if (track_interaction == 500):
+            return HttpResponseBadRequest()
+
+        response = HttpResponse()
+        
+        response.status_code = track_interaction
+        return response
+    except:
+        return HttpResponseBadRequest()
+
 def get_recommendations(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         request_artists = request.POST.getlist('artists[]')[:2]     # Grab list of artists. Limit to 2
         request_tracks = request.POST.getlist('tracks[]')[:2]       # Grab list of tracks. Limit to 2
