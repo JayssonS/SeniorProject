@@ -16,11 +16,16 @@ $(function() {
     $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).on('click', `.${CONST_STRING_ID_RESULT_ELLIPSES}`, function (event) {
         const x = event.clientX;
         const y = event.clientY;
+        let nodeY = y - ellipsesModal.height();
         nodeTrackId = event.currentTarget.parentNode.id;
         
         ellipsesModal.removeClass('hidden');
         ellipsesModal.css('left', x);
-        ellipsesModal.css('top', (y - ellipsesModal.height()));
+
+        if (nodeY < 0) {
+            nodeY = y;
+        }
+        ellipsesModal.css('top', nodeY);
     });
 
     $('body').on('click', `.${CONST_STRING_ID_ELLIPSES_MODAL_BTN}`, function(event) {
