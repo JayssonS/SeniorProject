@@ -3,6 +3,8 @@ from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from spotify2_app.consts import CONST_USER_MAX_PLAYLISTS
+
 # Create your models here.
 class CustomUser(AbstractUser):
     pass
@@ -51,6 +53,8 @@ class Artistdata(models.Model):
 class TrackInteraction(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     track = models.ForeignKey(Musicdata, on_delete=models.CASCADE)
+    interacted_at = models.DateTimeField(auto_now_add=True)
+    interact_update = models.DateTimeField(auto_now=True)
     disliked = models.BooleanField(default=False)
 
 class Playlist(models.Model):
@@ -60,6 +64,16 @@ class Playlist(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     tracks = models.ManyToManyField(Musicdata, through='PlaylistTrack')
+
+    def save(self, *args, **kwargs):
+        if (self._state.adding is True):
+            playlist_filter = Playlist.objects.filter(user=self.user)
+
+            if (playlist_filter.exists()):
+                if (playlist_filter.all().count() >= CONST_USER_MAX_PLAYLISTS):
+                    print("User created max playlists allowed!")
+                    return None
+        super().save(*args, **kwargs)
 
 class PlaylistTrack(models.Model):
     playlist = models.ForeignKey('Playlist', on_delete=models.CASCADE)

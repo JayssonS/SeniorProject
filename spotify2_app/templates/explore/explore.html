@@ -6,6 +6,36 @@
 Explore
 {% endblock %}
 
+{% block head %}
+<script>
+    let djangoUserPlaylists = [];
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+</script>
+{% endblock %}
+
 {% block content %}
-{% include "track/explore_track.html" %}
+
+<input type="text" placeholder="Search for songs..." id="artist-search-bar" autocomplete='off'
+    class="search-bar w-full input input-bordered mb-4" />
+
+<div class="divider"></div>
+
+<div id="search-results-placeholder">
+</div>
+
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/explore/explore.js' %}"></script>
 {% endblock %}

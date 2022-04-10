@@ -36,5 +36,40 @@
         })(); return true;">
         Dislike
     </button>
+    <button
+        onClick="(function() {
+            $.ajax({
+                url: '/api/create_playlist/',
+                type: 'POST',
+                xhrFields: { withCredentials: true },
+            });
+        })(); return true;">
+        Create Playlist
+    </button>
+    {% if playlists %}
+
+    <div class="flex flex-col border-2 border-blue">
+
+        {% for playlist in playlists %}
+
+        <button
+            id={{ playlist.id }}
+            onClick="(function() {
+                $.ajax({
+                    url: '/api/add_to_playlist/',
+                    type: 'POST',
+                    xhrFields: { withCredentials: true },
+                    data: {
+                        'playlist_id': id,
+                        'track_id': parentNode.parentNode.id,
+                    }
+                });
+            })(); return true;">
+            {{ playlist.name }}
+        </button>
+
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

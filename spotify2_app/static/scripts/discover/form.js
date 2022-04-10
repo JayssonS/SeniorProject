@@ -404,7 +404,7 @@ $(function () {
                             for="${arrSongs[i]['id']}"
                             class="
                                 rounded-r-xl bg-primary-content w-[60px] cursor-pointer pt-4
-                                text-primary text-3xl text-center font-semibold
+                                text-primary text-3xl text-center font-semibold select-none
                                 hover:bg-primary hover:text-white hover:bg-primary
                                 peer-checked:bg-green-600 peer-checked:text-white
                                 peer-checked:hover:bg-red-600">

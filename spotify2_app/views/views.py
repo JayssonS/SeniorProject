@@ -22,6 +22,12 @@ def home(request):
 
 # Explore page views
 def explore(request):
+    if request.user.is_authenticated:
+        user_playlists_filter = Playlist.objects.filter(user=request.user)
+
+        if (user_playlists_filter.exists()):
+            return render(request, 'explore/explore.html', {'playlists': user_playlists_filter.all()})
+
     return render(request, 'explore/explore.html')
 
 # Views relating to user profiles

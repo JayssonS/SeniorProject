@@ -1,6 +1,7 @@
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
+from django.core.serializers.json import DjangoJSONEncoder
 
 from ..consts import *
 from ..models import *
@@ -173,3 +174,58 @@ def get_recommendations(request):
         json.dumps({'recommendations': recommendations}),
         content_type='application/json'
     )
+
+@csrf_exempt
+def create_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    created_playlist = Playlist.objects.create(user=request.user)
+
+    if (created_playlist.id is None):
+        return HttpResponseBadRequest()
+
+    user_playlist_query = Playlist.objects.filter(user=request.user)
+    new_playlist_filter = Playlist.objects.filter(id=created_playlist.id)
+    new_playlist = new_playlist_filter.get()
+
+    new_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
+
+    new_playlist.save()
+    
+
+    return HttpResponse(                                            # Return parsed data
+        json.dumps({'playlist': list(new_playlist_filter.values())}, cls=DjangoJSONEncoder),
+        content_type='application/json'
+    )
+
+@csrf_exempt
+def add_to_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    print(request.POST)
+
+    try:
+        playlist_id = int(request.POST['playlist_id'])
+        track_id = request.POST['track_id']
+        playlist = Playlist.objects.get(user=request.user, id=playlist_id)
+        track = Musicdata.objects.get(id=track_id)
+
+        if (PlaylistTrack.objects.filter(playlist=playlist, track=track).exists()):
+            return HttpResponseBadRequest()
+
+        PlaylistTrack.objects.create(track=track, playlist=playlist)
+    except:
+            return HttpResponseBadRequest()
+
+    response = HttpResponse()
+    return response

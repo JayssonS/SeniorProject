@@ -7,5 +7,6 @@ CONST_BASE_BACKEND = 'django.contrib.auth.backends.ModelBackend'
 
 CONST_COOKIE_DURATION = 60 * 60 * 24
 
+CONST_USER_MAX_PLAYLISTS = 10
 CONST_TRACK_LIKED = False
 CONST_TRACK_DISLIKED = True
