@@ -42,6 +42,8 @@
 
 <body class="flex flex-col h-screen">
 		{% include "base/navbar.html" %}
+		{% block contentexclude %}
+		{% endblock %}
 		<div class="container w-11/12 md:w-10/12 2xl:w-8/12 mb-5 pt-5 mx-auto">
 			{% block content %}
 			{% endblock %}

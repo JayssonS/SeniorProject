@@ -73,6 +73,63 @@ function createEllipsesModal() {
     ellipsesModal = $(`#${CONST_STRING_ID_ELLIPSES_MODAL}`);
 }
 
+function createTrackElement(parentId, trackId) {
+    $(`#${parentId}`).append(`
+    <div 
+        id="${trackId}"
+        class="flex bg-neutral ${CONST_STRING_ID_SEARCH_RESULT}">
+        <iframe style="border-radius:12px"
+            src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            width="100%"
+            height="80px"
+            frameborder="0">
+        </iframe>
+        <button
+            onClick="(function() {
+                $.ajax({
+                    url: '/api/interact_track/',
+                    type: 'POST',
+                    xhrFields: { withCredentials: true },
+                    data: {
+                        'track_id': parentNode.id,
+                        'interact_flag': 0,
+                    }});
+            })(); return true;">
+            Like
+        </button>
+        <button
+            onClick="(function() {
+                $.ajax({
+                    url: '/api/interact_track/',
+                    type: 'POST',
+                    xhrFields: { withCredentials: true },
+                    data: {
+                        'track_id': parentNode.id,
+                        'interact_flag': 1,
+                    }});
+            })(); return true;">
+            Dislike
+        </button>
+        <button
+            onClick="(function() {
+                $.ajax({
+                    url: '/api/create_playlist/',
+                    type: 'POST',
+                    xhrFields: { withCredentials: true },
+                });
+            })(); return true;">
+            Create Playlist
+        </button>
+        <button
+            class="${CONST_STRING_ID_RESULT_ELLIPSES}">
+            ...
+        </button>
+    </div>
+`);
+}
+
 function handleTrackResults(json) {
     const arrTracks = json['songs'];
 
@@ -94,59 +151,6 @@ function handleTrackResults(json) {
     for (i = 0; i < arrTracks.length; i++) {
         trackId = arrTracks[i]['id'];
 
-        $(`#${CONST_STRING_DIV_SEARCH_RESULTS_CONTAINER}`).append(`
-            <div 
-                id="${trackId}"
-                class="flex bg-neutral ${CONST_STRING_ID_SEARCH_RESULT}">
-                <iframe style="border-radius:12px"
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator"
-                    allowfullscreen=""
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    width="100%"
-                    height="80px"
-                    frameborder="0">
-                </iframe>
-                <button
-                    onClick="(function() {
-                        $.ajax({
-                            url: '/api/interact_track/',
-                            type: 'POST',
-                            xhrFields: { withCredentials: true },
-                            data: {
-                                'track_id': parentNode.id,
-                                'interact_flag': 0,
-                            }});
-                    })(); return true;">
-                    Like
-                </button>
-                <button
-                    onClick="(function() {
-                        $.ajax({
-                            url: '/api/interact_track/',
-                            type: 'POST',
-                            xhrFields: { withCredentials: true },
-                            data: {
-                                'track_id': parentNode.id,
-                                'interact_flag': 1,
-                            }});
-                    })(); return true;">
-                    Dislike
-                </button>
-                <button
-                    onClick="(function() {
-                        $.ajax({
-                            url: '/api/create_playlist/',
-                            type: 'POST',
-                            xhrFields: { withCredentials: true },
-                        });
-                    })(); return true;">
-                    Create Playlist
-                </button>
-                <button
-                    class="${CONST_STRING_ID_RESULT_ELLIPSES}">
-                    ...
-                </button>
-            </div>
-        `);
+        createTrackElement(CONST_STRING_DIV_SEARCH_RESULTS_CONTAINER, trackId);
     }
 }

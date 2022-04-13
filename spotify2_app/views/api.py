@@ -196,7 +196,6 @@ def create_playlist(request):
     new_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
 
     new_playlist.save()
-    
 
     return HttpResponse(                                            # Return parsed data
         json.dumps({'playlist': list(new_playlist_filter.values())}, cls=DjangoJSONEncoder),
@@ -229,3 +228,28 @@ def add_to_playlist(request):
 
     response = HttpResponse()
     return response
+
+@csrf_exempt
+def get_user_track_dislikes(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    try:
+        userId = request.POST['userId']
+        user = CustomUser.objects.get(id=userId)
+        track_dislikes = TrackInteraction.objects.filter(user=user, disliked=True)
+        
+        if (not track_dislikes.exists()):
+            response = HttpResponse(
+                json.dumps({'message': 'No dislikes found!'}),
+                content_type='application/json'
+            )
+            response.status_code = 204
+            return response
+
+        return HttpResponse(                                            # Return parsed data
+            json.dumps({'dislikes': list(track_dislikes.values('track'))}),
+            content_type='application/json'
+        )
+    except:
+            return HttpResponseBadRequest()

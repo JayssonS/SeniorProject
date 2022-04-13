@@ -1,3 +1,4 @@
+from django.http import Http404, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
@@ -32,9 +33,24 @@ def explore(request):
 
 # Views relating to user profiles
 def user_profile(request, username):
-    user = CustomUser.objects.get(username=username)
+    try:
+        user = CustomUser.objects.get(username=username)
+        track_likes = TrackInteraction.objects.filter(user=user, disliked=False)
+        user_playlists_filter = Playlist.objects.filter(user=user)
+        response_data = {
+            'pUser': user,
+        }
 
-    return render(request, 'profile/user_profile.html', {'pUser': user})
+        if (track_likes.exists()):
+            response_data['likes'] = track_likes.all()
+        
+        if (user_playlists_filter.exists()):
+            response_data['playlists'] = user_playlists_filter.all()
+
+        return render(request, 'profile/user_profile.html', response_data)
+    except:
+        raise Http404
+
 
 # Spotify Login Complete override to set cookies to a user logging in with spotify
 @never_cache
