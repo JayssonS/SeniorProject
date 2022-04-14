@@ -30,6 +30,14 @@
 
     {% endif %}
     const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+
+    const djangoProfileUserData = {
         id: "{{ pUser.id }}",
         username: "{{ pUser.username }}",
         first_name: "{{ pUser.first_name }}",
@@ -124,7 +132,7 @@
 <div id="search-results-placeholder"
     class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
         <div id="user-likes-container"
-            class="grid grid-cols-1 gap-4 rounded w-full bg-neutral p-5">
+            class="grid grid-cols-1 gap-4 rounded-xl w-full bg-neutral p-5">
             {% if not likes %}
                 <span class="font-semibold text-xl md:text-3xl mb-4">User has no liked tracks</span>
             {% endif %}

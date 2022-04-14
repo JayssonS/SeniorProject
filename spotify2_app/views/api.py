@@ -253,3 +253,29 @@ def get_user_track_dislikes(request):
         )
     except:
             return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_track_interaction(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    try:
+        track_id = request.POST['track_id']
+        track = Musicdata.objects.get(id=track_id)
+        track_interaction_filter = TrackInteraction.objects.filter(user=request.user, track=track)
+
+        if (not track_interaction_filter.exists()):
+            return HttpResponseBadRequest()
+        
+        response = HttpResponse()
+
+        if (track_interaction_filter.get().disliked == 1):
+            response.status_code = 204
+        
+        return response
+    except:
+        return HttpResponseBadRequest()

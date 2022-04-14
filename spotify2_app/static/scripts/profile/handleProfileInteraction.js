@@ -64,13 +64,33 @@ function buildDislikes(json, statusCode) {
         for (track in json['dislikes']) {
             trackId = json['dislikes'][track]['track'];
 
-            createTrackElement(CONST_STRING_DIV_DISLIKES_CONTAINER, trackId);
+            createTrackElement(CONST_STRING_DIV_DISLIKES_CONTAINER, trackId, 1);
         }
     } else {
         $(`#${CONST_STRING_DIV_DISLIKES_CONTAINER}`).append(`
             <span class="font-semibold text-xl md:text-3xl mb-4">User has no disliked tracks</span>`);
     }
 }
+
+function setLikedOrDisliked(trackId, flag) {
+    if (djangoUserData.id == 'None') {
+        console.log("No user logged in!");
+        return;
+    }
+    if (djangoUserData.id === djangoProfileUserData.id) {
+        if (flag === 0) {
+            $(`#like-${trackId}`).prop('checked', true);
+        } else {
+            $(`#dislike-${trackId}`).prop('checked', true);
+        }
+        return;
+    }
+    getLikedOrDisliked(trackId);
+}
+
+/* function interactTrack(trackId, flag) {
+    console.log("Does this work?");
+} */
 
 function getUserDislikes() {
     $.ajax({
@@ -92,7 +112,7 @@ function getUserDislikes() {
 }
 
 function createUserLikes() {
-    for (track in djangoUserLikes) {
-        createTrackElement(CONST_STRING_DIV_LIKES_CONTAINER, djangoUserLikes[track]);
-    }
+    djangoUserLikes.forEach(x => {
+        createTrackElement(CONST_STRING_DIV_LIKES_CONTAINER, x, 0);
+    });
 }
