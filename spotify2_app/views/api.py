@@ -1,5 +1,7 @@
 from django.http import HttpResponseBadRequest, HttpResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
+from django.core.serializers.json import DjangoJSONEncoder
 
 from ..consts import *
 from ..models import *
@@ -12,7 +14,10 @@ import json
 
 # API endpoints
 
+@csrf_exempt
 def search_artist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         keyword = request.POST['keyword']                   # Grab keyword from post
     except:
@@ -58,7 +63,10 @@ def search_artist(request):
         content_type='application/json'
     )
 
+@csrf_exempt
 def search_song(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         keyword = request.POST['keyword']                   # Get keyword from post data
     except:
@@ -94,8 +102,62 @@ def search_song(request):
         content_type='application/json'
     )                                                       # Return queried data
 
-@require_POST
+@csrf_exempt
+def interact_track(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    if (request.user is None):
+        print("No user!")
+        return HttpResponseBadRequest()
+
+    if (not request.user.is_authenticated):
+        print("User not authed")
+        return HttpResponseBadRequest()
+
+    try:
+        trackId = request.POST['track_id']
+        interactFlag = request.POST['interact_flag']
+        track_interaction = interact_track_helper(request.user, trackId, bool(int(interactFlag)))
+
+        if (track_interaction == 500):
+            return HttpResponseBadRequest()
+
+        response = HttpResponse()
+        
+        response.status_code = track_interaction
+        return response
+    except:
+        return HttpResponseBadRequest()
+
+@csrf_exempt
+def interact_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    if (request.user is None):
+        print("No user!")
+        return HttpResponseBadRequest()
+
+    if (not request.user.is_authenticated):
+        print("User not authed")
+        return HttpResponseBadRequest()
+
+    playlist_id = request.POST['playlist_id']
+    interact_flag = request.POST['interact_flag']
+    playlist_interaction = interact_playlist_helper(request.user, playlist_id, bool(int(interact_flag)))
+
+    if (playlist_interaction == 500):
+        return HttpResponseBadRequest()
+
+    response = HttpResponse()
+    
+    response.status_code = playlist_interaction
+    return response
+@csrf_exempt
 def get_recommendations(request):
+    if (request.method == 'GET'):
+        return redirect('/')
     try:
         request_artists = request.POST.getlist('artists[]')[:2]     # Grab list of artists. Limit to 2
         request_tracks = request.POST.getlist('tracks[]')[:2]       # Grab list of tracks. Limit to 2
@@ -139,3 +201,155 @@ def get_recommendations(request):
         json.dumps({'recommendations': recommendations}),
         content_type='application/json'
     )
+
+@csrf_exempt
+def create_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    created_playlist = Playlist.objects.create(user=request.user)
+
+    if (created_playlist.id is None):
+        return HttpResponseBadRequest()
+
+    user_playlist_query = Playlist.objects.filter(user=request.user)
+    new_playlist_filter = Playlist.objects.filter(id=created_playlist.id)
+    new_playlist = new_playlist_filter.get()
+
+    new_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
+
+    new_playlist.save()
+
+    return HttpResponse(                                            # Return parsed data
+        json.dumps({'playlist': list(new_playlist_filter.values())}, cls=DjangoJSONEncoder),
+        content_type='application/json'
+    )
+
+@csrf_exempt
+def add_to_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    print(request.POST)
+
+    try:
+        playlist_id = int(request.POST['playlist_id'])
+        track_id = request.POST['track_id']
+        playlist = Playlist.objects.get(user=request.user, id=playlist_id)
+        track = Musicdata.objects.get(id=track_id)
+
+        if (PlaylistTrack.objects.filter(playlist=playlist, track=track).exists()):
+            return HttpResponseBadRequest()
+
+        PlaylistTrack.objects.create(track=track, playlist=playlist)
+    except:
+            return HttpResponseBadRequest()
+
+    response = HttpResponse()
+    return response
+
+@csrf_exempt
+def get_user_track_dislikes(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    try:
+        userId = request.POST['userId']
+        user = CustomUser.objects.get(id=userId)
+        track_dislikes = TrackInteraction.objects.filter(user=user, disliked=True)
+        
+        if (not track_dislikes.exists()):
+            response = HttpResponse(
+                json.dumps({'message': 'No dislikes found!'}),
+                content_type='application/json'
+            )
+            response.status_code = 204
+            return response
+
+        return HttpResponse(                                            # Return parsed data
+            json.dumps({'dislikes': list(track_dislikes.values('track'))}),
+            content_type='application/json'
+        )
+    except:
+            return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_track_interaction(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    try:
+        track_id = request.POST['track_id']
+        track = Musicdata.objects.get(id=track_id)
+        track_interaction_filter = TrackInteraction.objects.filter(user=request.user, track=track)
+
+        if (not track_interaction_filter.exists()):
+            return HttpResponseBadRequest()
+        
+        response = HttpResponse()
+
+        if (track_interaction_filter.get().disliked == 1):
+            response.status_code = 204
+        
+        return response
+    except:
+        return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_playlist_interaction(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    try:
+        playlist_id = request.POST['playlist_id']
+        playlist = Playlist.objects.get(id=playlist_id)
+        playlist_interaction_filter = PlaylistInteraction.objects.filter(user=request.user, playlist=playlist)
+
+        if (not playlist_interaction_filter.exists()):
+            return HttpResponseBadRequest()
+        
+        response = HttpResponse()
+
+        if (playlist_interaction_filter.get().disliked == 1):
+            response.status_code = 204
+        
+        return response
+    except:
+        return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_user_playlists(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    try:
+        user_id = request.POST['userId']
+        user = CustomUser.objects.filter(id=user_id).get()
+        playlist_filter = Playlist.objects.filter(user=user)
+        response = HttpResponse()
+
+        if (not playlist_filter.exists()):
+            response.status_code = 204
+        else:
+            response.content = json.dumps({'playlists': list(playlist_filter.values('id', 'name'))})
+            response['Content-Type'] = 'application/json'
+
+        return response
+    except:
+        return HttpResponseBadRequest()

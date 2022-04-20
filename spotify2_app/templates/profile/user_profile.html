@@ -2,6 +2,51 @@
 
 {% load static %}
 
+{% block head %}
+<script>
+    let djangoUserPlaylists = [];
+    let djangoUserLikes = [];
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% if likes %}
+
+        {% for like in likes %}
+        
+        djangoUserLikes.push('{{like.track.id}}')
+
+        {% endfor %}
+
+    {% endif %}
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+
+    const djangoProfileUserData = {
+        id: "{{ pUser.id }}",
+        username: "{{ pUser.username }}",
+        first_name: "{{ pUser.first_name }}",
+        last_name: "{{ pUser.last_name }}",
+        uid: "{{ pUser.uid }}",
+    };
+</script>
+{% endblock %}
+
 {% block title %}
 {% if pUser %}
     {% if pUser.first_name == '' %}
@@ -12,5 +57,89 @@
 {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block contentexclude %}
+<div class="bg-neutral m-[-5] pb-0 p-5 pb-0 w-full">
+    <div class="flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 mb-3 pt-5 mx-auto">
+        <div class="flex flex-row">
+            <div class="avatar">
+                <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                    <img src="https://api.lorem.space/image/face?hash=3174" />
+                </div>
+            </div>
+            <div class="mt-6 ml-8 font-bold text-xl md:text-3xl">
+                {% if pUser.first_name == '' %}
+                    <span>{{pUser.username}}</span>
+                {% else %}
+                    <span>{{pUser.first_name}} {{pUser.last_name}}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="divider mb-2 before:bg-[#a6adba] after:bg-[#a6adba]"></div>
+        <div class="flex flex-row m-0">
+            <div>
+                <input type="radio" name="profile-section-select" value="likes" checked
+                    id="profile-section-likes" class="sr-only peer profile-input-header">
+                <label for="profile-section-likes" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Likes</span></label>
+            </div>
+            <div>
+                <input type="radio" name="profile-section-select" value="dislikes"
+                    id="profile-section-dislikes" class="sr-only peer profile-input-header">
+                <label for="profile-section-dislikes" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Dislikes</span></label>
+            </div>
+            <div>
+                <input type="radio" name="profile-section-select" value="playlists"
+                    id="profile-section-playlists" class="sr-only peer profile-input-header">
+                <label for="profile-section-playlists" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Playlists</span></label>
+            </div>
+            <div>
+                <input type="radio" name="profile-section-select" value="followers"
+                    id="profile-section-followers" class="sr-only peer profile-input-header">
+                <label for="profile-section-followers" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Followers</span></label>
+            </div>
+            <div>
+                <input type="radio" name="profile-section-select" value="following"
+                    id="profile-section-following" class="sr-only peer profile-input-header">
+                <label for="profile-section-following" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Following</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="search-results-placeholder"
+    class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
+        <div id="user-likes-container"
+            class="grid grid-cols-1 gap-4 rounded-xl w-full bg-neutral p-5">
+            {% if not likes %}
+                <span class="font-semibold text-xl md:text-3xl mb-4">User has no liked tracks</span>
+            {% endif %}
+        </div>
+</div>
+
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/profile/handleProfileInteraction.js' %}"></script>
 {% endblock %}

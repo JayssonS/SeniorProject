@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Explore
+{% endblock %}
+
+{% block head %}
+<script>
+    let djangoUserPlaylists = [];
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+    
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+
+<input type="text" placeholder="Search for songs..." id="artist-search-bar" autocomplete='off'
+    class="search-bar w-full input input-bordered mb-4" />
+
+<div class="divider"></div>
+
+<div id="search-results-placeholder">
+</div>
+
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/explore/explore.js' %}"></script>
+{% endblock %}

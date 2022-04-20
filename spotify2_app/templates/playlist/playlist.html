@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{{playlist.name}}
+{% endblock %}
+
+{% block head %}
+<script>
+    let djangoPlaylistTracks = [];
+    let djangoUserPlaylists = [];
+    let playlistId = '{{playlist.id}}';
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+    
+    {% if tracks %}
+        {% for track in tracks %}
+
+        djangoPlaylistTracks.push('{{track.track_id}}');
+        
+        {% endfor %}
+    {% endif %}
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+</script>
+{% endblock %}
+
+{% block contentexclude %}
+<div class="bg-neutral m-[-5] pb-0 p-5 pb-0 w-full">
+    <div id="playlist-header-container"
+        class="flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 mb-3 pt-5 mx-auto">
+        <div class="flex flex-row">
+            <div class="flex flex-col">
+                <div
+                    class="flex flex-row flex-wrap w-[240px] h-[240px] mr-5 pointer-events-none">
+                    <img 
+                        src="https://i.scdn.co/image/ab67616d0000b273c4111b6c5f08abb1c18c6e60"
+                        class="rounded-tl-xl w-[120px] h-[120px] p-0 m-0">
+                    </img>
+                    <img 
+                        src="https://i.scdn.co/image/ab67616d0000b2733a909f2d301e192142c9d897"
+                        class="rounded-tr-xl w-[120px] h-[120px] p-0 m-0">
+                    </img>
+                    <img 
+                        src="https://i.scdn.co/image/ab67616d0000b273701a60c5e6620792cd382004"
+                        class="rounded-bl-xl w-[120px] h-[120px] p-0 m-0">
+                    </img>
+                    <img 
+                        src="https://i.scdn.co/image/ab67616d0000b2737a951a332897aea8e61eda1e"
+                        class="rounded-br-xl w-[120px] h-[120px] p-0 m-0">
+                    </img>
+                </div>
+            </div>
+            <div class="flex flex-col justify-between">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl md:text-3xl mb-5">{{playlist.name}}</span>
+                    <span>{{track_count}} tracks</span>
+                    <span>By: 
+                        {% if owner.first_name != '' %}
+                            <a 
+                                href="/u/{{owner.username}}"
+                                class="text-primary
+                                    hover:text-primary-focus">
+                                {{owner.first_name}} {{owner.last_name}}</a>
+                        {% else %}
+                            <a 
+                                href="/u/{{owner.username}}"
+                                class="text-primary
+                                    hover:text-primary-focus">
+                                {{owner.username}}</a>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="flex flex-row">
+                    <div class="h-[40px] w-20 m-0">
+                        <input type="checkbox" name="song" value="like" id="like-playlist"
+                            class="sr-only peer playlist-like-selection">
+                        <label for="like-playlist" class="select-none text-center cursor-pointer
+                            m-0 p-2 w-full h-full block font-semibold
+                            hover:bg-base-100
+                            peer-checked:border-b-4 peer-checked:border-[#15803D] peer-checked:text-[#15803D]">
+                            <span>Like</span></label>
+                    </div>
+                    <div class="h-[40px] w-20 m-0">
+                        <input type="checkbox" name="song" value="dislike" id="dislike-playlist"
+                            class="sr-only peer playlist-like-selection">
+                        <label for="dislike-playlist" class="select-none text-center cursor-pointer
+                            m-0 p-2 w-full h-full block font-semibold
+                            hover:bg-base-100
+                            peer-checked:border-b-4 peer-checked:border-[#B91C1C] peer-checked:text-[#B91C1C]">
+                            <span>Dislike</span></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="search-results-placeholder"
+    class="
+        mt-5 rounded-xl bg-neutral flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 pt-5 mx-auto
+        grid grid-cols-1 gap-4 p-5">
+        {% if track_count == 0 %}
+            <span class="font-semibold text-xl md:text-3xl mb-4">Playlist has no tracks</span>
+        {% endif %}
+</div>
+
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/playlist/handlePlaylistInteraction.js' %}"></script>
+{% endblock %}
