@@ -57,6 +57,31 @@ class TrackInteraction(models.Model):
     interact_update = models.DateTimeField(auto_now=True)
     disliked = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if (self._state.adding is True):
+            trackInteractionFilter = TrackInteraction.objects.filter(user=self.user, track=self.track)
+
+            if (trackInteractionFilter.exists()):
+                print("User interaction already exists!")
+                return None
+        super().save(*args, **kwargs)
+
+class PlaylistInteraction(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    playlist = models.ForeignKey('Playlist', on_delete=models.CASCADE)
+    interacted_at = models.DateTimeField(auto_now_add=True)
+    interact_update = models.DateTimeField(auto_now=True)
+    disliked = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if (self._state.adding is True):
+            playlist_interaction_filter = PlaylistInteraction.objects.filter(user=self.user, playlist=self.playlist)
+
+            if (playlist_interaction_filter.exists()):
+                print("User interaction already exists!")
+                return None
+        super().save(*args, **kwargs)
+
 class Playlist(models.Model):
     name = models.CharField(max_length=50)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -78,3 +103,7 @@ class Playlist(models.Model):
 class PlaylistTrack(models.Model):
     playlist = models.ForeignKey('Playlist', on_delete=models.CASCADE)
     track = models.ForeignKey('MusicData', on_delete=models.CASCADE)
+
+class TrackCoverArt(models.Model):
+    track = models.ForeignKey('MusicData', on_delete=models.CASCADE)
+    url = models.TextField()

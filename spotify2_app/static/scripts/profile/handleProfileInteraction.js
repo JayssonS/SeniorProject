@@ -1,14 +1,11 @@
 const CONST_STRING_DIV_LIKES_CONTAINER = 'user-likes-container';
 const CONST_STRING_DIV_DISLIKES_CONTAINER = 'user-dislikes-container';
+const CONST_STRING_DIV_PLAYLISTS_CONTAINER = 'user-playlists-container';
 const CONST_STRING_DIV_PROFILE_HEADER = 'profile-input-header';
 
 const CONST_STRING_BTN_SELECT_LIKES = 'profile-section-likes';
 const CONST_STRING_BTN_SELECT_DISLIKES = 'profile-section-dislikes';
 const CONST_STRING_BTN_SELECT_PLAYLISTS = 'profile-section-playlists';
-
-const CONST_STRING_DIV_USER_LIKES = 'user-likes-container';
-const CONST_STRING_DIV_USER_DISLIKES = 'user-dislikes-container';
-const CONST_STRING_DIV_USER_PLAYLISTS = 'user-playlists-container';
 
 let selectedDiv = null;
 
@@ -18,12 +15,12 @@ $(function () {
 
         switch (event.target.id) {
             case CONST_STRING_BTN_SELECT_LIKES:
-                selectedDiv = $(`#${CONST_STRING_DIV_USER_LIKES}`);
+                selectedDiv = $(`#${CONST_STRING_DIV_LIKES_CONTAINER}`);
                 
                 selectedDiv.removeClass('hidden');
                 break;
             case CONST_STRING_BTN_SELECT_DISLIKES:
-                selectedDiv = $(`#${CONST_STRING_DIV_USER_DISLIKES}`);
+                selectedDiv = $(`#${CONST_STRING_DIV_DISLIKES_CONTAINER}`);
                 
                 if (!selectedDiv.length) {
                     buildDislikesContainer();
@@ -32,10 +29,13 @@ $(function () {
                 selectedDiv.removeClass('hidden');
                 break;
             case CONST_STRING_BTN_SELECT_PLAYLISTS:
-                selectedDiv = $(`#${CONST_STRING_DIV_USER_PLAYLISTS}`);
+                selectedDiv = $(`#${CONST_STRING_DIV_PLAYLISTS_CONTAINER}`);
                 
                 if (!selectedDiv.length) {
+                    buildPlaylistsContainer();
+                    return;
                 }
+                selectedDiv.removeClass('hidden');
                 break;
             default:
                 console.log("Unknown case");
@@ -43,10 +43,21 @@ $(function () {
         }
     });
 
-    selectedDiv = $(`#${CONST_STRING_DIV_USER_LIKES}`);
+    selectedDiv = $(`#${CONST_STRING_DIV_LIKES_CONTAINER}`);
 
     createUserLikes();
 });
+
+function buildPlaylistsContainer() {
+    $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).append(`
+        <div id="${CONST_STRING_DIV_PLAYLISTS_CONTAINER}"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 rounded w-full bg-neutral p-5">
+        </div>`);
+    
+    selectedDiv = $(`#${CONST_STRING_DIV_PLAYLISTS_CONTAINER}`);
+
+    getUserPlaylists();
+}
 
 function buildDislikesContainer() {
     $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).append(`
@@ -54,9 +65,27 @@ function buildDislikesContainer() {
             class="grid grid-cols-1 gap-4 rounded w-full bg-neutral p-5">
         </div>`);
 
-    selectedDiv = $(`#${CONST_STRING_DIV_USER_DISLIKES}`);
+    selectedDiv = $(`#${CONST_STRING_DIV_DISLIKES_CONTAINER}`);
 
     getUserDislikes();
+}
+
+function buildPlaylists(json, statusCode) {
+    if (statusCode == 200) {
+        console.log("Successful request");
+        
+        console.log(json);
+        console.log(json['playlists']);
+
+        for (playlist in json['playlists']) {
+            playlist = json['playlists'][playlist]
+
+            createPlaylistElement(CONST_STRING_DIV_PLAYLISTS_CONTAINER, playlist);
+        }
+    } else {
+        $(`#${CONST_STRING_DIV_PLAYLISTS_CONTAINER}`).append(`
+            <span class="font-semibold text-xl md:text-3xl mb-4">User has no playlists</span>`);
+    }
 }
 
 function buildDislikes(json, statusCode) {
@@ -92,15 +121,28 @@ function setLikedOrDisliked(trackId, flag) {
     console.log("Does this work?");
 } */
 
+function getUserPlaylists() {
+    $.ajax({
+        url: '/api/get_user_playlists/',
+        type: 'POST',
+        data: {
+            'userId': djangoProfileUserData.id,
+        },
+        success: function (json, status, xhr) {
+            buildPlaylists(json, xhr.status);
+        },
+        error: function (xhr, errmsg, err, json) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    })
+}
+
 function getUserDislikes() {
     $.ajax({
         url: '/api/get_user_track_dislikes/',
         type: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        },
         data: {
-            'userId': djangoUserData.id,
+            'userId': djangoProfileUserData.id,
         },
         success: function (json, status, xhr) {
             buildDislikes(json, xhr.status);

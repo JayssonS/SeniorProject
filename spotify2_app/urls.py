@@ -21,6 +21,9 @@ urlpatterns = [
     # Explore Page
     path('explore/', views.explore, name='explore'),
 
+    # Playlist Page
+    url(r'^playlist/(?P<playlist_id>\w+)/$', views.playlist, name='playlist'),
+
     # Recommendation form
     path('discover/', views.discover_main, name='discover'),
     path('discover/recommendations/', views.discover_recommendations, name='discover_recommendations'),
@@ -35,6 +38,9 @@ urlpatterns = [
     path('api/add_to_playlist/', api.add_to_playlist, name='add_to_playlist'),
     path('api/get_user_track_dislikes/', api.get_user_track_dislikes, name='get_user_track_dislikes'),
     path('api/get_track_interaction/', api.get_track_interaction, name='get_track_interaction'),
+    path('api/get_user_playlists/', api.get_user_playlists, name='get_user_playlists'),
+    path('api/interact_playlist/', api.interact_playlist, name='interact_playlist'),
+    path('api/get_playlist_interaction/', api.get_playlist_interaction, name='get_playlist_interaction'),
 
     # User auth
     path('signup/', views.request_signup, name = 'signup'),

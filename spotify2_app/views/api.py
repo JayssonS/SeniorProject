@@ -14,6 +14,7 @@ import json
 
 # API endpoints
 
+@csrf_exempt
 def search_artist(request):
     if (request.method == 'GET'):
         return redirect('/')
@@ -62,6 +63,7 @@ def search_artist(request):
         content_type='application/json'
     )
 
+@csrf_exempt
 def search_song(request):
     if (request.method == 'GET'):
         return redirect('/')
@@ -128,6 +130,31 @@ def interact_track(request):
     except:
         return HttpResponseBadRequest()
 
+@csrf_exempt
+def interact_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    if (request.user is None):
+        print("No user!")
+        return HttpResponseBadRequest()
+
+    if (not request.user.is_authenticated):
+        print("User not authed")
+        return HttpResponseBadRequest()
+
+    playlist_id = request.POST['playlist_id']
+    interact_flag = request.POST['interact_flag']
+    playlist_interaction = interact_playlist_helper(request.user, playlist_id, bool(int(interact_flag)))
+
+    if (playlist_interaction == 500):
+        return HttpResponseBadRequest()
+
+    response = HttpResponse()
+    
+    response.status_code = playlist_interaction
+    return response
+@csrf_exempt
 def get_recommendations(request):
     if (request.method == 'GET'):
         return redirect('/')
@@ -276,6 +303,53 @@ def get_track_interaction(request):
         if (track_interaction_filter.get().disliked == 1):
             response.status_code = 204
         
+        return response
+    except:
+        return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_playlist_interaction(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    try:
+        playlist_id = request.POST['playlist_id']
+        playlist = Playlist.objects.get(id=playlist_id)
+        playlist_interaction_filter = PlaylistInteraction.objects.filter(user=request.user, playlist=playlist)
+
+        if (not playlist_interaction_filter.exists()):
+            return HttpResponseBadRequest()
+        
+        response = HttpResponse()
+
+        if (playlist_interaction_filter.get().disliked == 1):
+            response.status_code = 204
+        
+        return response
+    except:
+        return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_user_playlists(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+
+    try:
+        user_id = request.POST['userId']
+        user = CustomUser.objects.filter(id=user_id).get()
+        playlist_filter = Playlist.objects.filter(user=user)
+        response = HttpResponse()
+
+        if (not playlist_filter.exists()):
+            response.status_code = 204
+        else:
+            response.content = json.dumps({'playlists': list(playlist_filter.values('id', 'name'))})
+            response['Content-Type'] = 'application/json'
+
         return response
     except:
         return HttpResponseBadRequest()

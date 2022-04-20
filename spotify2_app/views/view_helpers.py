@@ -152,3 +152,27 @@ def interact_track_helper(user, trackId, flag):
         TrackInteraction.objects.create(user=user, track=track, disliked=flag)
 
     return 200
+
+def interact_playlist_helper(user, playlist_id, flag):
+    playlist_filter = Playlist.objects.filter(id=playlist_id)
+
+    if (not playlist_filter.exists()):
+        return 500
+    
+    playlist = playlist_filter.get()
+    playlist_interaction_filter = PlaylistInteraction.objects.filter(user=user, playlist=playlist)
+
+    if (playlist_interaction_filter.exists()):
+        playlist_interaction = playlist_interaction_filter.get()
+
+        if (playlist_interaction.disliked == bool(flag)):
+            playlist_interaction.delete()
+            return 204
+        else:
+            playlist_interaction.disliked = flag
+            
+            playlist_interaction.save()
+    else:
+        PlaylistInteraction.objects.create(user=user, playlist=playlist, disliked=flag)
+
+    return 200

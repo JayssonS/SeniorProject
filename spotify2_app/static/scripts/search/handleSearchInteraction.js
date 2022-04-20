@@ -5,6 +5,7 @@ const CONST_STRING_ID_SEARCH_RESULT = 'search-result-obj';
 const CONST_STRING_ID_ELLIPSES_MODAL = 'playlist-ellipses-modal';
 const CONST_STRING_ID_ELLIPSES_MODAL_BTN = 'btn-playlist-ellipses-modal';
 const CONST_STRING_ID_RESULT_ELLIPSES = 'btn-result-ellipses';
+const CONST_STRING_ID_PLAYLIST_RESULT = 'playlist-result-obj';
 
 let ellipsesModal = null;
 let nodeTrackId = '';
@@ -12,6 +13,10 @@ let nodeTrackId = '';
 $(function() {
     $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).on('click', `.${CONST_STRING_ID_SEARCH_RESULT}`, function (event) {
 
+    });
+
+    $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).on('click', `.${CONST_STRING_ID_PLAYLIST_RESULT}`, function (event) {
+        window.location.href = `/playlist/${event.currentTarget.id}`
     });
     
     $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).on('click', `.${CONST_STRING_ID_RESULT_ELLIPSES}`, function (event) {
@@ -140,7 +145,7 @@ function createTrackElement(parentId, trackId, flag) {
                         m-0 p-2 w-full h-full block font-semibold
                         hover:bg-base-100
                         peer-checked:border-t-4 peer-checked:border-[#B91C1C] peer-checked:text-[#B91C1C]">
-                        <span>Disike</span></label>
+                        <span>Dislike</span></label>
                 </div>
             </div>
             <button class="btn-result-ellipses
@@ -151,6 +156,39 @@ function createTrackElement(parentId, trackId, flag) {
     </div>
     `);
     setLikedOrDisliked(trackId, flag);
+}
+
+function createPlaylistElement(parentId, playListData) {
+    console.log("CREATING PLAYIST");
+    $(`#${parentId}`).append(`
+        <div
+            id=${playListData['id']}
+            class="
+                ${CONST_STRING_ID_PLAYLIST_RESULT}
+                flex flex-col bg-base-200 rounded-xl p-[10px] w-[260px] h-[300px] select-none cursor-pointer
+                hover:bg-base-100">
+            <div
+                class="flex flex-row flex-wrap w-[240px] h-[240px] mb-[10px] pointer-events-none">
+                <img 
+                    src="https://i.scdn.co/image/ab67616d0000b273c4111b6c5f08abb1c18c6e60"
+                    class="rounded-tl-xl w-[120px] h-[120px] p-0 m-0">
+                </img>
+                <img 
+                    src="https://i.scdn.co/image/ab67616d0000b2733a909f2d301e192142c9d897"
+                    class="rounded-tr-xl w-[120px] h-[120px] p-0 m-0">
+                </img>
+                <img 
+                    src="https://i.scdn.co/image/ab67616d0000b273701a60c5e6620792cd382004"
+                    class="rounded-bl-xl w-[120px] h-[120px] p-0 m-0">
+                </img>
+                <img 
+                    src="https://i.scdn.co/image/ab67616d0000b2737a951a332897aea8e61eda1e"
+                    class="rounded-br-xl w-[120px] h-[120px] p-0 m-0">
+                </img>
+            </div>
+            <span class="font-semibold text-ellipsis overflow-hidden whitespace-nowrap">${playListData['name']}</div>
+        </div>
+    `);
 }
 
 function setLikedOrDisliked(trackId, flag) {

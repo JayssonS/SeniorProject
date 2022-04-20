@@ -152,5 +152,25 @@ def discover_form(request):
 def discover_recommendations(request):
     return render(request, 'discover/discover_recommendations.html')
 
+    
+def playlist(request, playlist_id):
+    try:
+        playlist = Playlist.objects.get(id=playlist_id)
+        owner = CustomUser.objects.filter(id=playlist.user_id).values('username', 'first_name', 'last_name').first()
+        playlist_track_filter = PlaylistTrack.objects.filter(playlist=playlist)
+        user_playlists_filter = Playlist.objects.filter(user=request.user)
+        response_data = {
+            'playlist': playlist,
+            'owner': owner,
+            'track_count': playlist_track_filter.count()
+        }
 
+        if (playlist_track_filter.exists()):
+            response_data['tracks'] = playlist_track_filter.all()
+        
+        if (user_playlists_filter.exists()):
+            response_data['playlists'] = user_playlists_filter.all()
 
+        return render(request, 'playlist/playlist.html', response_data)
+    except:
+        raise Http404
