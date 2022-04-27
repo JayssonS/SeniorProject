@@ -363,22 +363,59 @@ def follow_user(request):
     if (not request.user.is_authenticated):
         return HttpResponseBadRequest()
 
-    followee_id = request.POST['followee_id']
-    followee_user = CustomUser.objects.filter(id=followee_id)
+    try:
+        followee_id = request.POST['followee_id']
+        followee_user = CustomUser.objects.filter(id=followee_id)
 
-    if (not followee_user.exists()):
+        if (not followee_user.exists()):
+            return HttpResponseBadRequest()
+
+        if (followee_user.get().id == request.user.id):
+            return HttpResponseBadRequest()
+
+        follower_filter = Follower.objects.filter(follower=request.user, followee=followee_user.get())
+        response = HttpResponse()
+
+        if (follower_filter.exists()):
+            follower_filter.delete()
+            response.status_code = 204
+        else:
+            Follower.objects.create(follower=request.user, followee=followee_user.get())
+
+        return response
+    except:
         return HttpResponseBadRequest()
+    
+@csrf_exempt
+def get_user_followers(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+        
+    try:
+        profile_id = request.POST['profile_id']
+        profile_user_filter = CustomUser.objects.filter(id=profile_id)
 
-    if (followee_user.get().id == request.user.id):
+        if (not profile_user_filter.exists()):
+            return HttpResponseBadRequest()
+
+        profile_followers = Follower.objects.filter(followee=profile_user_filter.get())
+        response = HttpResponse()
+        followers = []
+        
+        if (profile_followers.exists()):
+            for follower in profile_followers.all():
+                followers.append({
+                    'id': follower.follower.id,
+                    'username': follower.follower.username,
+                    'first_name': follower.follower.first_name,
+                    'last_name': follower.follower.last_name,
+                })
+
+            response.content = json.dumps({'followers': followers})
+            response['Content-Type'] = 'application/json'
+        else:
+            response.status_code = 204
+
+        return response
+    except:
         return HttpResponseBadRequest()
-
-    follower_filter = Follower.objects.filter(follower=request.user, followee=followee_user.get())
-    response = HttpResponse()
-
-    if (follower_filter.exists()):
-        follower_filter.delete()
-        response.status_code = 204
-    else:
-        Follower.objects.create(follower=request.user, followee=followee_user.get())
-
-    return response
