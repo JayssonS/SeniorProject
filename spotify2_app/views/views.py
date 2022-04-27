@@ -21,6 +21,9 @@ from .view_helpers import *
 def home(request):
     return render(request, 'base.html')
 
+
+
+
 # Explore page views
 def explore(request):
     if request.user.is_authenticated:
@@ -30,6 +33,28 @@ def explore(request):
             return render(request, 'explore/explore.html', {'playlists': user_playlists_filter.all()})
 
     return render(request, 'explore/explore.html')
+
+
+
+
+#User activity feed page
+def activity(request):
+    siteActivity = TrackInteraction.objects.order_by("-interacted_at").all()
+    user_playlists_filter = Playlist.objects.filter(user=request.user)
+    response_data = {
+        'siteActivity': siteActivity,
+    }
+
+    if (user_playlists_filter.exists()):
+        response_data['playlists'] = user_playlists_filter.all()
+
+    return render(request, 'activity/activity.html', 
+        response_data)
+
+
+    
+
+
 
 # Views relating to user profiles
 def user_profile(request, username):

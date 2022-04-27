@@ -5,10 +5,12 @@
     <div class="flex-none">
         <div class="md:flex-none mr-3">
             <ul class="menu menu-horizontal p-0">
+                <li><a href="{% url 'spotify2_app:activity' %}">Activity</a></li>
                 <li><a href="{% url 'spotify2_app:discover' %}">Discover</a></li>
                 <li><a href="{% url 'spotify2_app:explore' %}">Explore</a></li>
             </ul>
         </div>
+
         {% if user.is_authenticated %}
         <div class="dropdown dropdown-end">
             <label tabindex="0" class="btn btn-ghost btn-circle avatar">

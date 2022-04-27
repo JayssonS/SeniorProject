@@ -241,8 +241,8 @@ def add_to_playlist(request):
     print(request.POST)
 
     try:
-        playlist_id = int(request.POST['playlist_id'])
         track_id = request.POST['track_id']
+        playlist_id = int(request.POST['playlist_id'])
         playlist = Playlist.objects.get(user=request.user, id=playlist_id)
         track = Musicdata.objects.get(id=track_id)
 
@@ -290,6 +290,7 @@ def get_track_interaction(request):
     if (not request.user.is_authenticated):
         return HttpResponseBadRequest()
 
+   
     try:
         track_id = request.POST['track_id']
         track = Musicdata.objects.get(id=track_id)
