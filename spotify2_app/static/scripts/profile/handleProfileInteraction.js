@@ -6,10 +6,27 @@ const CONST_STRING_DIV_PROFILE_HEADER = 'profile-input-header';
 const CONST_STRING_BTN_SELECT_LIKES = 'profile-section-likes';
 const CONST_STRING_BTN_SELECT_DISLIKES = 'profile-section-dislikes';
 const CONST_STRING_BTN_SELECT_PLAYLISTS = 'profile-section-playlists';
+const CONST_STRING_BTN_FOLLOW_USER = 'btn-profile-follow';
 
 let selectedDiv = null;
 
 $(function () {
+    $(`#${CONST_STRING_BTN_FOLLOW_USER}`).on('click', function (event) {
+        $.ajax({
+            url: '/api/follow_user/',
+            type: 'POST',
+            data: {
+                'followee_id': djangoProfileUserData.id,
+            },
+            success: function (json, status, xhr) {
+                console.log(xhr.status);
+            },
+            error: function (xhr, errmsg, err, json) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
     $(`.${CONST_STRING_DIV_PROFILE_HEADER}`).on('change', function (event) {
         selectedDiv.addClass('hidden');
 
@@ -73,9 +90,6 @@ function buildDislikesContainer() {
 function buildPlaylists(json, statusCode) {
     if (statusCode == 200) {
         console.log("Successful request");
-        
-        console.log(json);
-        console.log(json['playlists']);
 
         for (playlist in json['playlists']) {
             playlist = json['playlists'][playlist]
@@ -134,7 +148,7 @@ function getUserPlaylists() {
         error: function (xhr, errmsg, err, json) {
             console.log(xhr.status + ": " + xhr.responseText);
         }
-    })
+    });
 }
 
 function getUserDislikes() {
@@ -150,7 +164,7 @@ function getUserDislikes() {
         error: function (xhr, errmsg, err, json) {
             console.log(xhr.status + ": " + xhr.responseText);
         }
-    })
+    });
 }
 
 function createUserLikes() {

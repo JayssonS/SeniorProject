@@ -353,3 +353,32 @@ def get_user_playlists(request):
         return response
     except:
         return HttpResponseBadRequest()
+
+@csrf_exempt
+def follow_user(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    followee_id = request.POST['followee_id']
+    followee_user = CustomUser.objects.filter(id=followee_id)
+
+    if (not followee_user.exists()):
+        return HttpResponseBadRequest()
+
+    if (followee_user.get().id == request.user.id):
+        return HttpResponseBadRequest()
+
+    follower_filter = Follower.objects.filter(follower=request.user, followee=followee_user.get())
+    response = HttpResponse()
+
+    if (follower_filter.exists()):
+        follower_filter.delete()
+        response.status_code = 204
+    else:
+        Follower.objects.create(follower=request.user, followee=followee_user.get())
+
+    return response
