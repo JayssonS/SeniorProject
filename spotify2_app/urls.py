@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/get_playlist_interaction/', api.get_playlist_interaction, name='get_playlist_interaction'),
     path('api/follow_user/', api.follow_user, name='follow_user'),
     path('api/get_user_followers/', api.get_user_followers, name='get_user_followers'),
+    path('api/get_user_followees/', api.get_user_followees, name='get_user_followees'),
 
     # User auth
     path('signup/', views.request_signup, name = 'signup'),

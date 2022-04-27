@@ -419,3 +419,37 @@ def get_user_followers(request):
         return response
     except:
         return HttpResponseBadRequest()
+
+@csrf_exempt
+def get_user_followees(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+        
+    try:
+        profile_id = request.POST['profile_id']
+        profile_user_filter = CustomUser.objects.filter(id=profile_id)
+
+        if (not profile_user_filter.exists()):
+            return HttpResponseBadRequest()
+
+        profile_followees = Follower.objects.filter(followers=profile_user_filter.get())
+        response = HttpResponse()
+        followees = []
+        
+        if (profile_followees.exists()):
+            for followee in profile_followees.all():
+                followees.append({
+                    'id': followee.followee.id,
+                    'username': followee.followee.username,
+                    'first_name': followee.followee.first_name,
+                    'last_name': followee.followee.last_name,
+                })
+
+            response.content = json.dumps({'followees': followees})
+            response['Content-Type'] = 'application/json'
+        else:
+            response.status_code = 204
+
+        return response
+    except:
+        return HttpResponseBadRequest()

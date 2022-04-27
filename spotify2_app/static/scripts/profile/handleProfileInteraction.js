@@ -2,12 +2,14 @@ const CONST_STRING_DIV_LIKES_CONTAINER = 'user-likes-container';
 const CONST_STRING_DIV_DISLIKES_CONTAINER = 'user-dislikes-container';
 const CONST_STRING_DIV_PLAYLISTS_CONTAINER = 'user-playlists-container';
 const CONST_STRING_DIV_FOLLOWERS_CONTAINER = 'user-playlists-followers';
+const CONST_STRING_DIV_FOLLOWEES_CONTAINER = 'user-playlists-followees';
 const CONST_STRING_DIV_PROFILE_HEADER = 'profile-input-header';
 
 const CONST_STRING_BTN_SELECT_LIKES = 'profile-section-likes';
 const CONST_STRING_BTN_SELECT_DISLIKES = 'profile-section-dislikes';
 const CONST_STRING_BTN_SELECT_PLAYLISTS = 'profile-section-playlists';
 const CONST_STRING_BTN_SELECT_FOLLOWERS = 'profile-section-followers';
+const CONST_STRING_BTN_SELECT_FOLLOWEES = 'profile-section-followees';
 const CONST_STRING_BTN_FOLLOW_USER = 'btn-profile-follow';
 
 let selectedDiv = null;
@@ -70,6 +72,15 @@ $(function () {
                 }
                 selectedDiv.removeClass('hidden');
                 break;
+            case CONST_STRING_BTN_SELECT_FOLLOWEES:
+                selectedDiv = $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`);
+                
+                if (!selectedDiv.length) {
+                    buildFolloweeContainer();
+                    return;
+                }
+                selectedDiv.removeClass('hidden');
+                break;
             default:
                 console.log("Unknown case");
                 break;
@@ -90,6 +101,17 @@ function buildFollowerContainer() {
     selectedDiv = $(`#${CONST_STRING_BTN_SELECT_FOLLOWERS}`);
 
     getUserFollowers();
+}
+
+function buildFolloweeContainer() {
+    $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).append(`
+        <div id="${CONST_STRING_DIV_FOLLOWEES_CONTAINER}"
+            class="grid grid-cols-1 gap-4 rounded w-full bg-neutral p-5">
+        </div>`);
+    
+    selectedDiv = $(`#${CONST_STRING_BTN_SELECT_FOLLOWEES}`);
+
+    getUserFollowees();
 }
 
 function buildPlaylistsContainer() {
@@ -127,6 +149,22 @@ function buildFollowers(json, statusCode) {
     } else {
         $(`#${CONST_STRING_DIV_FOLLOWERS_CONTAINER}`).append(`
             <span class="font-semibold text-xl md:text-3xl mb-4">User has no followers</span>`);
+    }
+}
+
+function buildFollowees(json, statusCode) {
+    if (statusCode == 200) {
+        console.log("Successful request");
+
+        for (followee in json['followees']) {
+            followee = json['followees'][followee]
+
+            $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`).append(`
+                <span class="font-semibold text-xl md:text-3xl mb-4">${followee['username']} ${followee['first_name']} ${followee['last_name']}</span>`);
+        }
+    } else {
+        $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`).append(`
+            <span class="font-semibold text-xl md:text-3xl mb-4">User does not follow anyone</span>`);
     }
 }
 
@@ -187,6 +225,22 @@ function getUserFollowers() {
         },
         success: function (json, status, xhr) {
             buildFollowers(json, xhr.status);
+        },
+        error: function (xhr, errmsg, err, json) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+}
+
+function getUserFollowees() {
+    $.ajax({
+        url: '/api/get_user_followees/',
+        type: 'POST',
+        data: {
+            'profile_id': djangoProfileUserData.id,
+        },
+        success: function (json, status, xhr) {
+            buildFollowees(json, xhr.status);
         },
         error: function (xhr, errmsg, err, json) {
             console.log(xhr.status + ": " + xhr.responseText);
