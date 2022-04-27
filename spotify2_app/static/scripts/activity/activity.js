@@ -5,6 +5,8 @@ $(function() {
 });
 
 function createActivityFeed() {
+
+   
     djangoUserInteractions.forEach(x => {
         let span = '<a href="http://localhost:8000/u/'+x.username +'">'+x.username+'</a>';
 
