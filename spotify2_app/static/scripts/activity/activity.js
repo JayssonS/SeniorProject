@@ -6,7 +6,7 @@ $(function() {
 
 function createActivityFeed() {
     djangoUserInteractions.forEach(x => {
-        let span = x.username;
+        let span = '<a href="http://localhost:8000/u/'+x.username +'">'+x.username+'</a>';
 
         if (x.disliked == 'False') {
             span += ` liked`
@@ -15,7 +15,7 @@ function createActivityFeed() {
         }
 
         $(`#${CONST_STRING_DIV_ACTIVITY_CONTAINER}`).append(`
-            <div id="parent-${x.id}" class="w-full">
+            <div id="parent-${x.id}" class="w-full text-green-600 font-bold hover:underline">
                 <span>${span}</span>
             </div>
         `);
