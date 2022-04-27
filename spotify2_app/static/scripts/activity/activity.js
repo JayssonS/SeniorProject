@@ -15,8 +15,8 @@ function createActivityFeed() {
         }
 
         $(`#${CONST_STRING_DIV_ACTIVITY_CONTAINER}`).append(`
-            <div id="parent-${x.id}" class="w-full text-green-600 font-bold hover:underline">
-                <span>${span}</span>
+            <div id="parent-${x.id}" class="w-full">
+            <span class = "w-full text-green-600 font-bold hover:underline">${span}</span>
             </div>
         `);
 
