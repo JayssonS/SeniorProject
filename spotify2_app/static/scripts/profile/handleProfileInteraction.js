@@ -1,8 +1,8 @@
 const CONST_STRING_DIV_LIKES_CONTAINER = 'user-likes-container';
 const CONST_STRING_DIV_DISLIKES_CONTAINER = 'user-dislikes-container';
 const CONST_STRING_DIV_PLAYLISTS_CONTAINER = 'user-playlists-container';
-const CONST_STRING_DIV_FOLLOWERS_CONTAINER = 'user-playlists-followers';
-const CONST_STRING_DIV_FOLLOWEES_CONTAINER = 'user-playlists-followees';
+const CONST_STRING_DIV_FOLLOWERS_CONTAINER = 'user-followers-container';
+const CONST_STRING_DIV_FOLLOWEES_CONTAINER = 'user-followees-container';
 const CONST_STRING_DIV_PROFILE_HEADER = 'profile-input-header';
 
 const CONST_STRING_BTN_SELECT_LIKES = 'profile-section-likes';
@@ -98,7 +98,7 @@ function buildFollowerContainer() {
             class="grid grid-cols-1 gap-4 rounded w-full bg-neutral p-5">
         </div>`);
     
-    selectedDiv = $(`#${CONST_STRING_BTN_SELECT_FOLLOWERS}`);
+    selectedDiv = $(`#${CONST_STRING_DIV_FOLLOWERS_CONTAINER}`);
 
     getUserFollowers();
 }
@@ -109,7 +109,7 @@ function buildFolloweeContainer() {
             class="grid grid-cols-1 gap-4 rounded w-full bg-neutral p-5">
         </div>`);
     
-    selectedDiv = $(`#${CONST_STRING_BTN_SELECT_FOLLOWEES}`);
+    selectedDiv = $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`);
 
     getUserFollowees();
 }

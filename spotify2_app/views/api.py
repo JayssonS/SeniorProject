@@ -432,7 +432,7 @@ def get_user_followees(request):
         if (not profile_user_filter.exists()):
             return HttpResponseBadRequest()
 
-        profile_followees = Follower.objects.filter(followers=profile_user_filter.get())
+        profile_followees = Follower.objects.filter(follower=profile_user_filter.get())
         response = HttpResponse()
         followees = []
         
