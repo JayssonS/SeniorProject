@@ -32,7 +32,8 @@ Activity
             id: "{{ interaction.id }}",
             username: "{{ interaction.user.username }}",
             disliked: "{{ interaction.disliked }}",
-            track_id: "{{ interaction.track_id }}"
+            track_id: "{{ interaction.track_id }}",
+            interacted_at:"{{ interaction.interacted_at }}"
         });
 
         {% endfor %}
