@@ -1,11 +1,61 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block head %}
+<script>
+    let djangoUserInteractions = [];
+    let djangoUserPlaylists = [];
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% if siteActivity %}
+    
+        {% for interaction in siteActivity %}
+
+        djangoUserInteractions.push({
+            id: "{{ interaction.id }}",
+            username: "{{ interaction.user.username }}",
+            disliked: "{{ interaction.disliked }}",
+            track_id: "{{ interaction.track_id }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+    
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+</script>
+{% endblock %}
+
 {% block content %}
 <h1> Spotify 2 User Activity</h1>
 
-{% for interaction in siteActivity %}
-<ul>
-    <li>{{interaction.user.username}}{{interaction.track}} {{interaction.disliked}}/<li>
-    {% endfor %}
-</ul>   
+<div id="search-results-placeholder"
+    class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
+    <div id="activity-feed-container"
+        class="w-full">
+    </div>
+</div>
+    
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/activity/activity.js' %}"></script>
 {% endblock %}

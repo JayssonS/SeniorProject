@@ -39,9 +39,17 @@ def explore(request):
 
 #User activity feed page
 def activity(request):
-    siteActivity = TrackInteraction.objects.all
+    siteActivity = TrackInteraction.objects.order_by("interacted_at").all()
+    user_playlists_filter = Playlist.objects.filter(user=request.user)
+    response_data = {
+        'siteActivity': siteActivity,
+    }
+
+    if (user_playlists_filter.exists()):
+        response_data['playlists'] = user_playlists_filter.all()
+
     return render(request, 'activity/activity.html', 
-        {'siteActivity' : siteActivity})
+        response_data)
 
 
     
