@@ -22,6 +22,11 @@ $(function () {
             },
             success: function (json, status, xhr) {
                 console.log(xhr.status);
+                if (xhr.status === 200) {
+                    $(`#${CONST_STRING_BTN_FOLLOW_USER}`).html('Unfollow');
+                } else {
+                    $(`#${CONST_STRING_BTN_FOLLOW_USER}`).html('Follow');
+                }
             },
             error: function (xhr, errmsg, err, json) {
                 console.log(xhr.status + ": " + xhr.responseText);
