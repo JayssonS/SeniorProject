@@ -4,6 +4,7 @@ const CONST_STRING_ID_TRACK_LIKE_SELECTION = 'track-like-selection';
 const CONST_STRING_ID_SEARCH_RESULT = 'search-result-obj';
 const CONST_STRING_ID_ELLIPSES_MODAL = 'playlist-ellipses-modal';
 const CONST_STRING_ID_ELLIPSES_MODAL_BTN = 'btn-playlist-ellipses-modal';
+const CONST_STRING_ID_ELLIPSES_MODAL_BTN_NEW = 'btn-playlist-ellipses-modal-new';
 const CONST_STRING_ID_RESULT_ELLIPSES = 'btn-result-ellipses';
 const CONST_STRING_ID_PLAYLIST_RESULT = 'playlist-result-obj';
 
@@ -23,7 +24,7 @@ $(function() {
         const x = event.clientX;
         const y = event.clientY;
         let nodeY = y - ellipsesModal.height();
-        nodeTrackId = event.currentTarget.parentNode.id;
+        nodeTrackId = event.currentTarget.parentNode.parentNode.id;
         
         ellipsesModal.removeClass('hidden');
         ellipsesModal.css('left', x);
@@ -59,6 +60,19 @@ $(function() {
                 'track_id': nodeTrackId,
             }
         });
+    });
+
+    $('body').on('click', `#${CONST_STRING_ID_ELLIPSES_MODAL_BTN_NEW}`, function(event) {
+        $.ajax({
+            url: '/api/add_to_new_playlist/',
+            type: 'POST',
+            xhrFields: { withCredentials: true },
+            data: {
+                'track_id': nodeTrackId,
+            },
+            success: function (json, status, xhr) {
+                createModalButton(json['playlist'])
+            }});
     });
 
     $('body').on('click', function(event) {
@@ -97,21 +111,33 @@ function modalBtnCallback(node) {
 function createEllipsesModal() {
     $('body').append(`
         <div id="${CONST_STRING_ID_ELLIPSES_MODAL}"
-            class="hidden absolute flex flex-col bg-neutral border border-neutral-400">
-            <span>Add to Playlist</span>
+            class="hidden absolute flex flex-col bg-base-200 rounded max-w-[200px] p-2">
+            <button 
+                id="${CONST_STRING_ID_ELLIPSES_MODAL_BTN_NEW}" 
+                class="text-ellipsis overflow-hidden whitespace-nowrap 
+                    p-1 text-left rounded
+                    hover:bg-primary-focus">
+                Add to New Playlist</button>
             <div class="divider p-0 m-0"></div>
         </div>
     `);
     for (i = 0; i < djangoUserPlaylists.length; i++) {
-        $(`#${CONST_STRING_ID_ELLIPSES_MODAL}`).append(`
-            <button
-                id="${djangoUserPlaylists[i]['id']}"
-                class="${CONST_STRING_ID_ELLIPSES_MODAL_BTN} pt-1 pb-1 hover:bg-primary-focus">
-                ${djangoUserPlaylists[i]['name']}
-            </button>
-        `);
+        createModalButton(djangoUserPlaylists[i])
     }
     ellipsesModal = $(`#${CONST_STRING_ID_ELLIPSES_MODAL}`);
+}
+
+function createModalButton(playlist) {
+    $(`#${CONST_STRING_ID_ELLIPSES_MODAL}`).append(`
+        <button
+            id="${playlist['id']}"
+            class="${CONST_STRING_ID_ELLIPSES_MODAL_BTN}
+                text-ellipsis overflow-hidden whitespace-nowrap 
+                p-1 text-left rounded
+                hover:bg-primary-focus">
+            ${playlist['name']}
+        </button>
+    `);
 }
 
 function createTrackElement(parentId, trackId, flag) {

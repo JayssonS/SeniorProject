@@ -201,6 +201,24 @@ def get_recommendations(request):
         json.dumps({'recommendations': recommendations}),
         content_type='application/json'
     )
+    
+@csrf_exempt
+def add_to_new_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    new_playlist = create_playlist_helper(request.user)
+
+    add_to_playlist_helper(request.user, request.POST['track_id'], new_playlist['id'])
+
+    return HttpResponse(
+        json.dumps({'playlist': new_playlist}),
+        content_type='application/json'
+    )
 
 @csrf_exempt
 def create_playlist(request):
@@ -211,21 +229,8 @@ def create_playlist(request):
     if (not request.user.is_authenticated):
         return HttpResponseBadRequest()
 
-    created_playlist = Playlist.objects.create(user=request.user)
-
-    if (created_playlist.id is None):
-        return HttpResponseBadRequest()
-
-    user_playlist_query = Playlist.objects.filter(user=request.user)
-    new_playlist_filter = Playlist.objects.filter(id=created_playlist.id)
-    new_playlist = new_playlist_filter.get()
-
-    new_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
-
-    new_playlist.save()
-
-    return HttpResponse(                                            # Return parsed data
-        json.dumps({'playlist': list(new_playlist_filter.values())}, cls=DjangoJSONEncoder),
+    return HttpResponse(
+        json.dumps({'playlist': create_playlist_helper(request.user)}),
         content_type='application/json'
     )
 
@@ -241,20 +246,11 @@ def add_to_playlist(request):
     print(request.POST)
 
     try:
-        track_id = request.POST['track_id']
-        playlist_id = int(request.POST['playlist_id'])
-        playlist = Playlist.objects.get(user=request.user, id=playlist_id)
-        track = Musicdata.objects.get(id=track_id)
-
-        if (PlaylistTrack.objects.filter(playlist=playlist, track=track).exists()):
-            return HttpResponseBadRequest()
-
-        PlaylistTrack.objects.create(track=track, playlist=playlist)
+        add_to_playlist_helper(request.user, request.POST['track_id'], request.POST['playlist_id'])
     except:
             return HttpResponseBadRequest()
 
-    response = HttpResponse()
-    return response
+    return HttpResponse()
 
 @csrf_exempt
 def get_user_track_dislikes(request):
