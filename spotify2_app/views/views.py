@@ -1,7 +1,14 @@
+from django.http import Http404, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+
+from social_core.actions import do_complete
+from social_django.utils import psa
+from social_django.views import _do_login
 
 from ..consts import *
 from ..models import *
@@ -14,11 +21,80 @@ from .view_helpers import *
 def home(request):
     return render(request, 'base.html')
 
+
+
+
+# Explore page views
+def explore(request):
+    if request.user.is_authenticated:
+        user_playlists_filter = Playlist.objects.filter(user=request.user)
+
+        if (user_playlists_filter.exists()):
+            return render(request, 'explore/explore.html', {'playlists': user_playlists_filter.all()})
+
+    return render(request, 'explore/explore.html')
+
+
+
+
+#User activity feed page
+def activity(request):
+    siteActivity = TrackInteraction.objects.order_by("-interacted_at").all()
+    user_playlists_filter = Playlist.objects.filter(user=request.user)
+    response_data = {
+        'siteActivity': siteActivity,
+    }
+
+    if (user_playlists_filter.exists()):
+        response_data['playlists'] = user_playlists_filter.all()
+
+    return render(request, 'activity/activity.html', 
+        response_data)
+
+
+    
+
+
+
 # Views relating to user profiles
 def user_profile(request, username):
-    user = CustomUser.objects.get(username=username)
+    try:
+        user = CustomUser.objects.get(username=username)
+        track_likes = TrackInteraction.objects.filter(user=user, disliked=False)
+        user_playlists_filter = Playlist.objects.filter(user=user)
+        response_data = {
+            'pUser': user,
+        }
 
-    return render(request, 'profile/user_profile.html', {'pUser': user})
+        if (track_likes.exists()):
+            response_data['likes'] = track_likes.all()
+        
+        if (user_playlists_filter.exists()):
+            response_data['playlists'] = user_playlists_filter.all()
+
+        return render(request, 'profile/user_profile.html', response_data)
+    except:
+        raise Http404
+
+
+# Spotify Login Complete override to set cookies to a user logging in with spotify
+@never_cache
+@csrf_exempt
+@psa(f'spotify2_app:complete')
+def complete(request, backend, *args, **kwargs):
+    """Authentication complete view"""
+    print("Do complete override")
+    response = do_complete(request.backend, _do_login, user=request.user,
+                       redirect_name=REDIRECT_FIELD_NAME, request=request,
+                       *args, **kwargs)
+    
+    try:
+        response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(request.user, CONST_RECO_MODEL_NAME), samesite='Lax', max_age=CONST_COOKIE_DURATION)
+    except:
+        print("Couldn't set recommendations to cookies!")
+
+    return response
+
 
 @login_required
 def user_settings(request):
@@ -55,7 +131,7 @@ def request_login(request):
 
                 response = redirect('/')
 
-                response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(user, CONST_RECO_MODEL_NAME), samesite='Lax')
+                response.set_cookie(key=CONST_RECO_COOKIE_NAME, value=getattr(user, CONST_RECO_MODEL_NAME), samesite='Lax', max_age=CONST_COOKIE_DURATION)
                 return response
             else:
                 messages.error(request, "Invalid username or password.")
@@ -101,5 +177,25 @@ def discover_form(request):
 def discover_recommendations(request):
     return render(request, 'discover/discover_recommendations.html')
 
+    
+def playlist(request, playlist_id):
+    try:
+        playlist = Playlist.objects.get(id=playlist_id)
+        owner = CustomUser.objects.filter(id=playlist.user_id).values('username', 'first_name', 'last_name').first()
+        playlist_track_filter = PlaylistTrack.objects.filter(playlist=playlist)
+        user_playlists_filter = Playlist.objects.filter(user=request.user)
+        response_data = {
+            'playlist': playlist,
+            'owner': owner,
+            'track_count': playlist_track_filter.count()
+        }
 
+        if (playlist_track_filter.exists()):
+            response_data['tracks'] = playlist_track_filter.all()
+        
+        if (user_playlists_filter.exists()):
+            response_data['playlists'] = user_playlists_filter.all()
 
+        return render(request, 'playlist/playlist.html', response_data)
+    except:
+        raise Http404
