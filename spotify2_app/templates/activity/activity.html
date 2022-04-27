@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1> Spotify 2 User Activity</h1>
+
+{% for interaction in siteActivity %}
+<ul>
+    <li>{{interaction.user.username}}{{interaction.track}} {{interaction.disliked}}/<li>
+    {% endfor %}
+</ul>   
+{% endblock %}

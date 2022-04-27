@@ -18,6 +18,9 @@ urlpatterns = [
 
     path('', views.home, name='home'),
 
+    #Activity Page
+    path('activity/', views.activity, name='activity'),
+    
     # Explore Page
     path('explore/', views.explore, name='explore'),
 
