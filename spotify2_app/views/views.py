@@ -42,11 +42,12 @@ def explore(request):
 def activity(request):
     siteActivity = TrackInteraction.objects.order_by("-interacted_at").all()
     response_data = {'siteActivity': siteActivity,}
-    following_activity = TrackInteraction.objects.order_by("-interacted_at").filter(Q(user__in=Follower.objects.filter(follower = request.user).values('followee')) | Q(user=request.user))
-    response_data['following_activity'] = following_activity
+    
 
     if request.user.is_authenticated:
         user_playlists_filter = Playlist.objects.filter(user=request.user)
+        following_activity = TrackInteraction.objects.order_by("-interacted_at").filter(Q(user__in=Follower.objects.filter(follower = request.user).values('followee')) | Q(user=request.user))
+        response_data['following_activity'] = following_activity
         if (user_playlists_filter.exists()):
             response_data['playlists'] = user_playlists_filter.all()
 
