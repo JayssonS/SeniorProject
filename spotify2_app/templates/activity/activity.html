@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Activity
+Activity Feed
 {% endblock %}
 
 {% block head %}
@@ -50,8 +50,48 @@ Activity
 </script>
 {% endblock %}
 
-{% block content %}
-<h1> Spotify 2 User Activity</h1>
+{% block contentexclude %}
+<div class="bg-neutral m-[-5] pb-0 p-5 pb-0 w-full">
+    <div class="flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 mb-3 pt-5 mx-auto">
+        <div class="flex flex-row ">
+            
+    </div>
+       
+        <div class="flex flex-row m-0">
+            <div>
+                <input type="radio" name="activity-section-select" value="likes" checked
+                    id="profile-section-likes" class="sr-only peer profile-input-header">
+                <label for="profile-section-likes" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Global Feed</span></label>
+            </div>
+            <div>
+                <input type="radio" name="profile-section-select" value="dislikes"
+                    id="profile-section-dislikes" class="sr-only peer profile-input-header">
+                <label for="profile-section-dislikes" class="select-none text-center
+                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                    hover:bg-base-100
+                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                    <span class="align-middle">
+                        Following Feed</span></label>
+            </div>
+            
+            
+            
+        </div>
+    </div>
+</div>
+<div id="search-results-placeholder"
+    class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
+        
+</div>
+          
+
+
+
 
 <div id="search-results-placeholder"
     class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
