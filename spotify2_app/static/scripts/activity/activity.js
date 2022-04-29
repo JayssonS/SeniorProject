@@ -28,8 +28,8 @@ function createActivityFeed() {
         $(`#${CONST_STRING_DIV_ACTIVTY_FOLLOWING_CONTAINER}`).append(`
         <div id="parent-${x.id}" class="w-full border-solid border-2 border-green-600 rounded bg-slate-800">
             <div class="flex justify-center">
-                <span class = "w-full text-green-200 font-bold hover:underline">${span}</span>
-                <span class = "w-full text-green-200 text-left font-bold">${interaction_time_span}</span>
+                <span class = "w-full text-green-600 font-bold hover:underline">${span}</span>
+                <span class = "w-full text-neutral-content text-left font-bold">${interaction_time_span}</span>
             </div>
         </div>
         `);
@@ -43,8 +43,8 @@ function createActivityFeed() {
         $(`#${CONST_STRING_DIV_ACTIVTY_FOLLOWING_CONTAINER}`).append(`
         <div id="parent-${x.id}" class="w-full flec items-end border-solid border-2 border-red-600 rounded bg-slate-800">
             <div class="flex justify-center">
-                <span class = "w-full text-red-400 font-bold hover:underline">${span}</span>
-                <span class = "w-full text-red-400 text-left font-bold ali">${interaction_time_span}</span>
+                <span class = "w-full text-red-600 font-bold hover:underline">${span}</span>
+                <span class = "w-full text-neutral-content text-left font-bold ali">${interaction_time_span}</span>
             </div>
         </div>
         `);
@@ -80,8 +80,8 @@ function createActivityFeed() {
             $(`#${CONST_STRING_DIV_ACTIVITY_CONTAINER}`).append(`
             <div id="parent-${x.id}" class="w-full border-solid border-2 border-green-600 rounded bg-slate-800">
                 <div class="flex justify-center">
-                    <span class = "w-full text-green-200 font-bold hover:underline">${span}</span>
-                    <span class = "w-full text-green-200 text-left font-bold">${interaction_time_span}</span>
+                    <span class = "w-full text-green-600 font-bold hover:underline">${span}</span>
+                    <span class = "w-full text-neutral-content text-left font-bold">${interaction_time_span}</span>
                 </div>
             </div>
             `);
@@ -95,8 +95,8 @@ function createActivityFeed() {
             $(`#${CONST_STRING_DIV_ACTIVITY_CONTAINER}`).append(`
             <div id="parent-${x.id}" class="w-full flec items-end border-solid border-2 border-red-600 rounded bg-slate-800">
                 <div class="flex justify-center">
-                    <span class = "w-full text-red-400 font-bold hover:underline">${span}</span>
-                    <span class = "w-full text-red-400 text-left font-bold ali">${interaction_time_span}</span>
+                    <span class = "w-full text-red-600 font-bold hover:underline">${span}</span>
+                    <span class = "w-full text-neutral-content text-left font-bold ali">${interaction_time_span}</span>
                 </div>
             </div>
             `);
