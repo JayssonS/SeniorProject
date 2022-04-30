@@ -59,7 +59,7 @@ $(function () {
                 
                 if (!selectedDiv.length) {
                     buildPlaylistsContainer();
-                    return;
+
                 }
                 selectedDiv.removeClass('hidden');
                 break;

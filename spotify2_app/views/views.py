@@ -51,12 +51,7 @@ def activity(request):
         if (user_playlists_filter.exists()):
             response_data['playlists'] = user_playlists_filter.all()
 
-   
-  
-        
-
-    return render(request, 'activity/activity.html', 
-        response_data)
+    return render(request, 'activity/activity.html', response_data)
 
 
     
