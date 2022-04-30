@@ -76,31 +76,30 @@ Activity Feed
 <div class="bg-neutral m-[-5] pb-0 p-5 pb-0 w-full">
     <div class="flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 mb-3 pt-5 mx-auto">
         <div class="flex flex-row ">
+            <div class="flex flex-row m-0">
+                <div>
+                    <input type="radio" name="activity-section-select" value="global feed" checked
+                        id="activity-global-feed" class="sr-only peer activity-input-header">
+                    <label for="activity-global-feed" class="select-none text-center
+                        h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                        hover:bg-base-100
+                        peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                        <span class="align-middle">
+                            Global Feed</span></label>
+                </div>
+                <div>
+                    <input type="radio" name="activity-section-select" value="following feed"
+                        id="activity-following-feed" class="sr-only peer activity-input-header">
+                    <label for="activity-following-feed" class="select-none text-center
+                        h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                        hover:bg-base-100
+                        peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                        <span class="align-middle">
+                            Following Feed</span></label>
+                </div>
+            </div>
             
-    </div>
-       
-        <div class="flex flex-row m-0">
-            <div>
-                <input type="radio" name="activity-section-select" value="global_feed" checked
-                    id="activity-global-feed" class="sr-only peer actvity-input-header">
-                <label for="activty-global-feed" class="select-none text-center
-                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
-                    hover:bg-base-100
-                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
-                    <span class="align-middle">
-                        Global Feed</span></label>
-            </div>
-            <div>
-                <input type="radio" name="activity-section-select" value="following_feed"
-                    id="activity-following-feed" class="sr-only peer activity-input-header">
-                <label for="activity-following-feed" class="select-none text-center
-                    h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
-                    hover:bg-base-100
-                    peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
-                    <span class="align-middle">
-                        Following Feed</span></label>
-            </div>
-        </div>
+        </div> 
     </div>
 </div>
 <div id="search-results-placeholder"
