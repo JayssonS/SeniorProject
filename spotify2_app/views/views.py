@@ -5,7 +5,6 @@ from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.db.models import Q
 
 from social_core.actions import do_complete
 from social_django.utils import psa
@@ -46,7 +45,7 @@ def activity(request):
 
     if request.user.is_authenticated:
         user_playlists_filter = Playlist.objects.filter(user=request.user)
-        following_activity = TrackInteraction.objects.order_by("-interacted_at").filter(Q(user__in=Follower.objects.filter(follower = request.user).values('followee')) | Q(user=request.user))
+        following_activity = TrackInteraction.objects.order_by("-interacted_at").filter(user__in=Follower.objects.filter(follower = request.user).values('followee'))
         response_data['following_activity'] = following_activity
         if (user_playlists_filter.exists()):
             response_data['playlists'] = user_playlists_filter.all()
