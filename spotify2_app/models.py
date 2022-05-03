@@ -107,3 +107,7 @@ class PlaylistTrack(models.Model):
 class TrackCoverArt(models.Model):
     track = models.ForeignKey('MusicData', on_delete=models.CASCADE)
     url = models.TextField()
+
+class Follower(models.Model):
+    follower = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='follower')
+    followee = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='followee')

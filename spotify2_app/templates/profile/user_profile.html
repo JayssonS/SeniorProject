@@ -72,6 +72,7 @@
                 {% else %}
                     <span>{{pUser.first_name}} {{pUser.last_name}}</span>
                 {% endif %}
+                    <span id="btn-profile-follow" class="btn bg-primary hover:bg-primary-focus text-white">Follow</span>
             </div>
         </div>
         <div class="divider mb-2 before:bg-[#a6adba] after:bg-[#a6adba]"></div>
@@ -118,8 +119,8 @@
             </div>
             <div>
                 <input type="radio" name="profile-section-select" value="following"
-                    id="profile-section-following" class="sr-only peer profile-input-header">
-                <label for="profile-section-following" class="select-none text-center
+                    id="profile-section-followees" class="sr-only peer profile-input-header">
+                <label for="profile-section-followees" class="select-none text-center
                     h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
                     hover:bg-base-100
                     peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">

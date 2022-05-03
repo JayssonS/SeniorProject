@@ -38,12 +38,16 @@ urlpatterns = [
     path('api/get_recommendations/', views.get_recommendations, name='get_recommendations'),
     path('api/interact_track/', api.interact_track, name='interact_track'),
     path('api/create_playlist/', api.create_playlist, name='create_playlist'),
+    path('api/add_to_new_playlist/', api.add_to_new_playlist, name='add_to_new_playlist'),
     path('api/add_to_playlist/', api.add_to_playlist, name='add_to_playlist'),
     path('api/get_user_track_dislikes/', api.get_user_track_dislikes, name='get_user_track_dislikes'),
     path('api/get_track_interaction/', api.get_track_interaction, name='get_track_interaction'),
     path('api/get_user_playlists/', api.get_user_playlists, name='get_user_playlists'),
     path('api/interact_playlist/', api.interact_playlist, name='interact_playlist'),
     path('api/get_playlist_interaction/', api.get_playlist_interaction, name='get_playlist_interaction'),
+    path('api/follow_user/', api.follow_user, name='follow_user'),
+    path('api/get_user_followers/', api.get_user_followers, name='get_user_followers'),
+    path('api/get_user_followees/', api.get_user_followees, name='get_user_followees'),
 
     # User auth
     path('signup/', views.request_signup, name = 'signup'),
