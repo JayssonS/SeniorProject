@@ -21,8 +21,8 @@ $(function() {
     });
     
     $(`#${CONST_STRING_DIV_SEARCH_RESULTS_PLACEHOLDER}`).on('click', `.${CONST_STRING_ID_RESULT_ELLIPSES}`, function (event) {
-        const x = event.clientX;
-        const y = event.clientY;
+        const x = event.pageX;
+        const y = event.pageY;
         let nodeY = y - ellipsesModal.height();
         nodeTrackId = event.currentTarget.parentNode.parentNode.id;
         
