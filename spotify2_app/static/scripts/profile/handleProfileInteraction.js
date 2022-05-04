@@ -142,9 +142,13 @@ function buildFollowers(json, statusCode) {
 
         for (follower in json['followers']) {
             follower = json['followers'][follower]
-
+            
             $(`#${CONST_STRING_DIV_FOLLOWERS_CONTAINER}`).append(`
-                <span class="font-semibold text-xl md:text-3xl mb-4">${follower['username']} ${follower['first_name']} ${follower['last_name']}</span>`);
+                <span class="font-semibold text-xl md:text-3xl mb-4">${follower['username']} ${follower['first_name']} ${follower['last_name']}
+                    <span class="btn bg-primary hover:bg-primary-focus justify-right text-white" style="float: right"> 
+                        <a class="nav-link" href="http://localhost:8000/u/${follower['username']}">View Profile</a>
+                    </span>
+                </span>`);
         }
     } else {
         $(`#${CONST_STRING_DIV_FOLLOWERS_CONTAINER}`).append(`
@@ -160,7 +164,11 @@ function buildFollowees(json, statusCode) {
             followee = json['followees'][followee]
 
             $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`).append(`
-                <span class="font-semibold text-xl md:text-3xl mb-4">${followee['username']} ${followee['first_name']} ${followee['last_name']}</span>`);
+                <span class="font-semibold text-xl md:text-3xl mb-4">${followee['username']} ${followee['first_name']} ${followee['last_name']}
+                    <span class="btn bg-primary hover:bg-primary-focus  text-white" style="float: right"> 
+                        <a class="nav-link" href="http://localhost:8000/u/${followee['username']}">View Profile</a>
+                    </span>
+                </span>`);
         }
     } else {
         $(`#${CONST_STRING_DIV_FOLLOWEES_CONTAINER}`).append(`
