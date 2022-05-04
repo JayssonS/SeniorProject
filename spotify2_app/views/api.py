@@ -80,14 +80,14 @@ def search_song(request):
 
     song_data = search_song_by_keyword(keyword)             # List of song results. Limited to 10 results
 
-    if (len(song_data) == 0):
-        song_data = query_spotify_song(keyword)
+    #if (len(song_data) == 0):
+    #    song_data = query_spotify_song(keyword)
 
-        for obj in song_data['tracks']['items']:
-            print(obj['id'])
+    #    for obj in song_data['tracks']['items']:
+    #        print(obj['id'])
 
-        """ for obj in serializers.deserialize('json', song_data['tracks']['items']):
-            print(obj['id']) """
+    #    for obj in serializers.deserialize('json', song_data['tracks']['items']):
+    #        print(obj['id'])
 
     if (len(song_data) == 0):
         response = HttpResponse(                            # Create data not found response
@@ -154,6 +154,7 @@ def interact_playlist(request):
     
     response.status_code = playlist_interaction
     return response
+    
 @csrf_exempt
 def get_recommendations(request):
     if (request.method == 'GET'):
@@ -172,6 +173,7 @@ def get_recommendations(request):
         return HttpResponseBadRequest()
 
     for artist_name in request_artists:
+        print("GRABBING ARTIST ID")
         artist = Artistdata.objects.filter(                         # Get the first artist matching a string
             name__iexact = artist_name
             ).first()
@@ -180,12 +182,9 @@ def get_recommendations(request):
             continue
         artists.append(artist.id)                                   # Add artist to list of artists
 
-    try:
-        recommendations = query_spotify(artists,                    # Populate recommendation list
-            genres,
-            request_tracks)
-    except:
-        return HttpResponseBadRequest()                             # API call failed
+    recommendations = query_spotify(artists,                    # Populate recommendation list
+        genres,
+        request_tracks)
 
     if (len(recommendations) == 0):
         response = HttpResponse(                                    # Create data not found response
