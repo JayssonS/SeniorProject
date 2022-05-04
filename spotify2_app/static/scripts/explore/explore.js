@@ -1,7 +1,16 @@
+const STRING_ID_USER_STATIC_DIV = 'user-results-placeholder';
+const STRING_ID_USER_RESULTS = 'user-results-container';
+const STRING_ID_USER_SEARCH = 'user-search-bar';
+const STRING_API_USER = 'search_user';
 const INT_TYPING_TIMEOUT = 300;
 const INT_KEYWORD_MIN_LENGTH = 2;
 
 let typingTimer = null;
+let stage = 0;
+const stageViews = {
+    0: 'song-select-container',
+    1: 'user-search-container',
+}
 
 $(function() {
     // Handle real-time searching
@@ -17,7 +26,7 @@ $(function() {
 
 function handleSearch() {
     const keyword = $(`.search-bar`).val().trim();
-
+    
     if (keyword === '') {
         $(`#${CONST_STRING_DIV_SEARCH_RESULTS_CONTAINER}`).remove();
         return;
@@ -46,6 +55,28 @@ function handleSearch() {
             }
         },
         error: function (xhr, errmsg, err, json) {                  // Call failure
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    })
+}
+
+function userSearch() {
+    const keyword = $(`user-search-bar`).val().trim();
+
+    if (keyword.length < INT_KEYWORD_MIN_LENGTH) return;            
+    console.log("Searching!");                                      
+
+    $.ajax({                                                        
+        url: '/api/search_user/',                                   
+        type: 'POST',                                               
+        headers: {                                                  
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        data: { 'keyword': keyword },                               
+        success: function (json, status, xhr) {                     
+            console.log(keyword)
+        },
+        error: function (xhr, errmsg, err, json) {                  
             console.log(xhr.status + ": " + xhr.responseText);
         }
     })

@@ -176,3 +176,33 @@ def interact_playlist_helper(user, playlist_id, flag):
         PlaylistInteraction.objects.create(user=user, playlist=playlist, disliked=flag)
 
     return 200
+
+def create_playlist_helper(user):
+    created_playlist = Playlist.objects.create(user=user)
+
+    if (created_playlist.id is None):
+        raise Exception('Could not create playlist!')
+
+    user_playlist_query = Playlist.objects.filter(user=user)
+    created_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
+
+    created_playlist.save()
+
+    return {
+        'id': created_playlist.id,
+        'name': created_playlist.name
+    }
+
+def add_to_playlist_helper(user, track_id, playlist_id):
+    playlist = Playlist.objects.get(user=user, id=playlist_id)
+    track = Musicdata.objects.get(id=track_id)
+
+    if (PlaylistTrack.objects.filter(playlist=playlist, track=track).exists()):
+        raise Exception('Playlist does not exist!')
+
+    PlaylistTrack.objects.create(track=track, playlist=playlist)
+
+def search_user_by_keyword(keyword):
+    query = UserProfile.objects.filter(user__contains = keyword)   # Query artists based on keyword
+
+    return list(query.values('users'))                             # Return queried data

@@ -102,6 +102,56 @@ def search_song(request):
         content_type='application/json'
     )                                                       # Return queried data
 
+
+@csrf_exempt
+def search_user(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    try:
+        keyword = request.POST['keyword']                   # Grab keyword from post
+    except:
+        return HttpResponseBadRequest()
+
+    if (not keyword or keyword == ''):                      # If the keyword is empty
+        return HttpResponseBadRequest()                     # Return a bad request
+
+    if request.method != 'POST':                            # A get request was used.
+        return HttpResponseBadRequest()                     # Return a bad request
+
+    sorted_users = []                                       # To sort set later
+    set_users = set()                                       # Set definition to grab UNIQUE
+    map_users = search_user_by_keyword(keyword)             # Grab list of users from query
+
+    if len(map_users) == 0:                                 # If no users are found
+        response = HttpResponse(                            # Create data not found response
+            json.dumps({'message': 'No users found!'}),
+            content_type='application/json'
+        )
+        response.status_code = 204                          # Set status code
+        return response
+
+    for list_maps in map_users:                             # Loop through returned users
+        if len(set_users) >= 30:
+            break
+        try:
+            for user in ast.literal_eval(list_maps['users']):
+                if len(set_users) >= 30:
+                    break
+                set_users.add(user)                         # Add found user to set
+        except:
+            continue
+
+    del map_users                                           # Cleanup map, no longer using
+
+    sorted_users = sorted(set_users)                        # Sort set into new list
+
+    del set_users                                           # Cleanup set, no longer using
+    
+    return HttpResponse(                                    # Return parsed data
+        json.dumps({'users': sorted_users}),
+        content_type='application/json'
+    )
+
 @csrf_exempt
 def interact_track(request):
     if (request.method == 'GET'):
@@ -201,6 +251,24 @@ def get_recommendations(request):
         json.dumps({'recommendations': recommendations}),
         content_type='application/json'
     )
+    
+@csrf_exempt
+def add_to_new_playlist(request):
+    if (request.method == 'GET'):
+        return redirect('/')
+    if (request.user is None):
+        return HttpResponseBadRequest()
+    if (not request.user.is_authenticated):
+        return HttpResponseBadRequest()
+
+    new_playlist = create_playlist_helper(request.user)
+
+    add_to_playlist_helper(request.user, request.POST['track_id'], new_playlist['id'])
+
+    return HttpResponse(
+        json.dumps({'playlist': new_playlist}),
+        content_type='application/json'
+    )
 
 @csrf_exempt
 def create_playlist(request):
@@ -211,21 +279,8 @@ def create_playlist(request):
     if (not request.user.is_authenticated):
         return HttpResponseBadRequest()
 
-    created_playlist = Playlist.objects.create(user=request.user)
-
-    if (created_playlist.id is None):
-        return HttpResponseBadRequest()
-
-    user_playlist_query = Playlist.objects.filter(user=request.user)
-    new_playlist_filter = Playlist.objects.filter(id=created_playlist.id)
-    new_playlist = new_playlist_filter.get()
-
-    new_playlist.name = "My Playlist #" + str(user_playlist_query.all().count())
-
-    new_playlist.save()
-
-    return HttpResponse(                                            # Return parsed data
-        json.dumps({'playlist': list(new_playlist_filter.values())}, cls=DjangoJSONEncoder),
+    return HttpResponse(
+        json.dumps({'playlist': create_playlist_helper(request.user)}),
         content_type='application/json'
     )
 
@@ -241,20 +296,11 @@ def add_to_playlist(request):
     print(request.POST)
 
     try:
-        playlist_id = int(request.POST['playlist_id'])
-        track_id = request.POST['track_id']
-        playlist = Playlist.objects.get(user=request.user, id=playlist_id)
-        track = Musicdata.objects.get(id=track_id)
-
-        if (PlaylistTrack.objects.filter(playlist=playlist, track=track).exists()):
-            return HttpResponseBadRequest()
-
-        PlaylistTrack.objects.create(track=track, playlist=playlist)
+        add_to_playlist_helper(request.user, request.POST['track_id'], request.POST['playlist_id'])
     except:
             return HttpResponseBadRequest()
 
-    response = HttpResponse()
-    return response
+    return HttpResponse()
 
 @csrf_exempt
 def get_user_track_dislikes(request):
@@ -290,6 +336,7 @@ def get_track_interaction(request):
     if (not request.user.is_authenticated):
         return HttpResponseBadRequest()
 
+   
     try:
         track_id = request.POST['track_id']
         track = Musicdata.objects.get(id=track_id)
