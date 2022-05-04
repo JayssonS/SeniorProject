@@ -62,7 +62,6 @@ def user_profile(request, username):
     try:
         user = CustomUser.objects.get(username=username)
         track_likes = TrackInteraction.objects.filter(user=user, disliked=False)
-        user_playlists_filter = Playlist.objects.filter(user=user)
         response_data = {
             'pUser': user,
         }
@@ -70,8 +69,11 @@ def user_profile(request, username):
         if (track_likes.exists()):
             response_data['likes'] = track_likes.all()
         
-        if (user_playlists_filter.exists()):
-            response_data['playlists'] = user_playlists_filter.all()
+        if (request.user.is_authenticated):
+            user_playlists_filter = Playlist.objects.filter(user=request.user)
+
+            if (user_playlists_filter.exists()):
+                response_data['playlists'] = user_playlists_filter.all()
 
         return render(request, 'profile/user_profile.html', response_data)
     except:
