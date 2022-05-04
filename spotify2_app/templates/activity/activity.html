@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Activity Feed
+{% endblock %}
+
+{% block head %}
+<script>
+    let djangoUserInteractions = [];
+    let djangoFollowingInteraction = [];
+    let djangoUserPlaylists = [];
+
+    {% if playlists %}
+    
+        {% for playlist in playlists %}
+
+        djangoUserPlaylists.push({
+            id: "{{ playlist.id }}",
+            name: "{{ playlist.name }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% if siteActivity %}
+    
+        {% for interaction in siteActivity %}
+
+        djangoUserInteractions.push({
+            id: "{{ interaction.id }}",
+            username: "{{ interaction.user.username }}",
+            disliked: "{{ interaction.disliked }}",
+            track_id: "{{ interaction.track_id }}",
+            interacted_at:"{{ interaction.interacted_at }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% if following_activity %}
+    
+        {% for interaction in following_activity %}
+
+       
+
+        djangoFollowingInteraction.push({
+            id: "{{ interaction.id }}",
+            username: "{{ interaction.user.username }}",
+            disliked: "{{ interaction.disliked }}",
+            track_id: "{{ interaction.track_id }}",
+            interacted_at:"{{ interaction.interacted_at }}"
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+
+
+ 
+    const djangoUserData = {
+        id: "{{ user.id }}",
+        username: "{{ user.username }}",
+        first_name: "{{ user.first_name }}",
+        last_name: "{{ user.last_name }}",
+        uid: "{{ user.uid }}",
+    }
+</script>
+{% endblock %}
+
+{% block contentexclude %}
+<div class="bg-neutral m-[-5] pb-0 p-5 pb-0 w-full">
+    <div class="flex flex-col w-10/12 md:w-8/12 2xl:w-7/12 mb-3 pt-5 mx-auto">
+        <div class="flex flex-row ">
+            <div class="flex flex-row m-0">
+                <div>
+                    <input type="radio" name="activity-section-select" value="global feed" checked
+                        id="activity-global-feed" class="sr-only peer activity-input-header">
+                    <label for="activity-global-feed" class="select-none text-center
+                        h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                        hover:bg-base-100
+                        peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                        <span class="align-middle">
+                            Global Feed</span></label>
+                </div>
+                <div>
+                    <input type="radio" name="activity-section-select" value="following feed"
+                        id="activity-following-feed" class="sr-only peer activity-input-header">
+                    <label for="activity-following-feed" class="select-none text-center
+                        h-16 m-0 rounded p-3 text-neutral-content cursor-pointer
+                        hover:bg-base-100
+                        peer-checked:border-b-4 peer-checked:border-[#6419e6] peer-checked:text-[#6419e6]">
+                        <span class="align-middle">
+                            Following Feed</span></label>
+                </div>
+            </div>
+            
+        </div> 
+    </div>
+</div>
+<div id="search-results-placeholder"
+    class="w-10/12 md:w-8/12 2xl:w-7/12 mt-5 mx-auto">
+        <div id="activity-global-container"
+            class="grid grid-cols-1 gap-4 rounded-xl w-full bg-neutral p-5">
+        </div>
+</div>
+    
+<script src="{% static 'scripts/consts.js' %}"></script>
+<script src="{% static 'scripts/search/handleSearchInteraction.js' %}"></script>
+<script src="{% static 'scripts/activity/activity.js' %}"></script>
+{% endblock %}

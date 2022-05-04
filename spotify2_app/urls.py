@@ -18,6 +18,9 @@ urlpatterns = [
 
     path('', views.home, name='home'),
 
+    #Activity Page
+    path('activity/', views.activity, name='activity'),
+    
     # Explore Page
     path('explore/', views.explore, name='explore'),
 
@@ -35,6 +38,7 @@ urlpatterns = [
     path('api/get_recommendations/', views.get_recommendations, name='get_recommendations'),
     path('api/interact_track/', api.interact_track, name='interact_track'),
     path('api/create_playlist/', api.create_playlist, name='create_playlist'),
+    path('api/add_to_new_playlist/', api.add_to_new_playlist, name='add_to_new_playlist'),
     path('api/add_to_playlist/', api.add_to_playlist, name='add_to_playlist'),
     path('api/get_user_track_dislikes/', api.get_user_track_dislikes, name='get_user_track_dislikes'),
     path('api/get_track_interaction/', api.get_track_interaction, name='get_track_interaction'),

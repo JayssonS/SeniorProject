@@ -19,7 +19,10 @@ from .view_helpers import *
 # Create your views here.
 
 def home(request):
-    return render(request, 'base.html')
+    return render(request, 'home.html')
+
+
+
 
 # Explore page views
 def explore(request):
@@ -30,6 +33,29 @@ def explore(request):
             return render(request, 'explore/explore.html', {'playlists': user_playlists_filter.all()})
 
     return render(request, 'explore/explore.html')
+
+
+
+
+#User activity feed page
+def activity(request):
+    siteActivity = TrackInteraction.objects.order_by("-interacted_at").all()
+    response_data = {'siteActivity': siteActivity,}
+    
+
+    if request.user.is_authenticated:
+        user_playlists_filter = Playlist.objects.filter(user=request.user)
+        following_activity = TrackInteraction.objects.order_by("-interacted_at").filter(user__in=Follower.objects.filter(follower = request.user).values('followee'))
+        response_data['following_activity'] = following_activity
+        if (user_playlists_filter.exists()):
+            response_data['playlists'] = user_playlists_filter.all()
+
+    return render(request, 'activity/activity.html', response_data)
+
+
+    
+
+
 
 # Views relating to user profiles
 def user_profile(request, username):

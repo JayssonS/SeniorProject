@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<div class="col-sm-3;" >
+    <div class="btn-group-vertical" >
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 20%; height: 30px;" class="btn btn-active" id="btn1" data-target="1">Todays Top Hits</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 20%; height: 30px;" class="btn btn-active" id="btn2" data-target="2">Top Songs USA</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 24%; height: 30px;" class="btn btn-active" id="btn3" data-target="3">Listeners Favourite</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 22%; height: 30px;" class="btn btn-active" id="btn4" data-target="4">Trending Weekly</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 20%; height: 30px;" class="btn btn-active" id="btn4" data-target="5">Mostly Chill</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 20%; height: 30px;" class="btn btn-active" id="btn1" data-target="Mood1">Feeling Relaxed</button>
+        <button type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 22%; height: 30px;" class="btn btn-active" id="btn2" data-target="Mood2">Mood Changers</button>
+        <button onclick="location.href='/discover/ ';" type="button" style="background-color: rgb(34, 198, 94); border-color:rgb(0, 0, 0); color:rgb(0, 0, 0); font-size : 20px; width: 22%; height: 30px;" class="btn btn-active" id="btn2" >Personalized</button>
+    </div>
+</div>
+<div id="content" class="col-sm-9" >
+    <div id="Mood1" >
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWV7EzJMK2FUI?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="Mood2">
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX5trt9i14X7j?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX52IXnX9fyzi?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="5">
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWEJlAGA9gs0?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="1" >
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX0kbJZpiYdZl?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="2">
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX6GwdWRQMQpq?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX1lVhptIYRda?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="3">
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX1lVhptIYRda?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4JAvHpjipBk?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    <div id="4">
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+        <br>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWYBO1MoTDhZI?utm_source=generator"
+        height="200" class="rounded w-full" frameborder="O" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+</div>
+<script>
+$('.btn').click(function() {
+	$('#content div').hide();
+    var target = '#' + $(this).data('target');
+    $(target).show();
+})</script>
+{% endblock %}
