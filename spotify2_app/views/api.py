@@ -172,19 +172,24 @@ def get_recommendations(request):
     if (len(genres) > 1):                                           # If more than one genre is given
         return HttpResponseBadRequest()
 
-    for artist_name in request_artists:
-        print("GRABBING ARTIST ID")
-        artist = Artistdata.objects.filter(                         # Get the first artist matching a string
-            name__iexact = artist_name
-            ).first()
+    str_query = 'select * from spotify2_app_artistdata where name = "'
+    try:
+        for artist_name in request_artists:
+            str_full_query = str_query + artist_name + '";'
+            artist = Artistdata.objects.raw(str_full_query)[0]
 
-        if artist is None:                                          # Not found, continue
-            continue
-        artists.append(artist.id)                                   # Add artist to list of artists
+            if artist is None:                                          # Not found, continue
+                continue
+            artists.append(artist.id)                                   # Add artist to list of artists
+    except:
+        return HttpResponseBadRequest()                             # API call failed
 
-    recommendations = query_spotify(artists,                    # Populate recommendation list
-        genres,
-        request_tracks)
+    try:
+        recommendations = query_spotify(artists,                    # Populate recommendation list
+            genres,
+            request_tracks)
+    except:
+        return HttpResponseBadRequest()                             # API call failed
 
     if (len(recommendations) == 0):
         response = HttpResponse(                                    # Create data not found response

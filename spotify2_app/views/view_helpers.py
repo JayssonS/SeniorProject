@@ -48,12 +48,7 @@ def query_spotify_song(keyword):
 def query_spotify(artists, genres, tracks):
     auth_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
     sp = spotipy.Spotify(auth_manager=auth_manager)
-
-    print(artists, genres, tracks)
-
-    recommendations = sp.search(q='far from home', limit=10, type='track')
-
-    print(recommendations)
+    recommendations = sp.recommendations(seed_artists=artists, seed_genres=genres, seed_tracks=tracks, limit=10)
 
     return recommendations
 
